@@ -1,0 +1,29 @@
+# Eclipse
+**/.classpath
+**/.project
+**/.settings/
+
+# Intellij
+**/.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+**/.history
+
+# Vs Code
+**/.vscode
+
+# Maven
+**/log/
+**/target/
+**/.m2/
+**/overlays/
+
+# Others
+**/*.*~
+**/._.DS_Store
+/bin/
+/.vscode/
+/.history/
+
+**/debug-editique/

@@ -1,0 +1,49 @@
+stages:
+  - build
+  - deploy
+
+build-and-publish-docker-image:
+  stage: build
+  image: buildah/stable:v1.30.0
+  tags:
+    - docker
+  variables:
+    GIT_DEPTH: 1
+    GIT_STRATEGY: clone
+    PUBLISH_REGISTRY: "oci-snapshot.devops.etat-ge.ch"
+    BUILDING_IMAGE_TAG: "latest"
+    BUILDING_IMAGE_NAME: "ch/ge/afc/rapports-bdd"
+  script:
+    - buildah version
+    - |
+      if [ -z "$PUBLISH_REGISTRY" ]
+      then
+        export PUBLISH_REGISTRY="$DOCKER_RELEASE_REGISTRY"
+      fi
+    - 'echo "Registry de publication image : $PUBLISH_REGISTRY"'
+    - echo "${PASS_USER_TECHNIQUE_GIT}" | buildah login --username "${USER_TECHNIQUE_GIT}"
+      --password-stdin "${PUBLISH_REGISTRY}"
+    - export FULL_IMAGE_NAME="$PUBLISH_REGISTRY/$BUILDING_IMAGE_NAME:$BUILDING_IMAGE_TAG"
+    - 'echo "Image : $FULL_IMAGE_NAME"'
+    - |
+      if [ -z "$BUILDING_IMAGE_DIR" ]
+      then
+        export BUILDING_IMAGE_DIR="."
+      fi
+    - cd $BUILDING_IMAGE_DIR
+    - buildah bud -f Dockerfile --format docker -t ${FULL_IMAGE_NAME} .
+    - buildah push ${FULL_IMAGE_NAME}
+    - cd -
+    - buildah logout "${PUBLISH_REGISTRY}"
+
+trigger-openshift-deployment:
+  stage: deploy
+  image: ch/ge/afc/oce-cli
+  tags:
+    - docker
+  when: manual
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - oc login --insecure-skip-tls-verify --token=$OPENSHIFT_PROJECT_TOKEN --server=https://api.soca.lbdev.etat-ge.ch:6443
+    - oc import-image rapports-bdd:latest --from=oci-snapshot.devops.etat-ge.ch/ch/ge/afc/rapports-bdd:latest --scheduled --confirm
