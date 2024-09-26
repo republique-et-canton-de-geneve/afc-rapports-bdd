@@ -48,3 +48,35 @@ Cette étape construit l'image docker et la publie sur nexus sous le nom complet
 Cette étape est facultative car OpenShift vérifie déjà toutes les 15 minutes si l'image nexus a été modifiée et la redéploie le cas échéant.
 
 Cette étape permet juste de déclencher tout de suite le rafraichissement si on ne souhaite pas attendre les 15 minutes.
+
+## Type Support for `.vue` Imports in TS
+
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```

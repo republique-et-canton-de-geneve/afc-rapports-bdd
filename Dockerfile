@@ -3,7 +3,7 @@ FROM oci-release.devops.etat-ge.ch/ch/ge/common/middlewares/web/nginx.122-ubi9:1
 
 USER root
 
-COPY ./src/ /srv/www/html
+COPY dist/ /srv/www/html
 
 USER 1001
 

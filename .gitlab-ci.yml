@@ -2,11 +2,33 @@ stages:
   - build
   - deploy
 
+variables:
+  NPM_CONFIG_CACHE: '$CI_PROJECT_DIR/.npm'
+  NPM_CONFIG_PROXY: 'http://proxygeadm.etat-ge.ch:3128'
+  NPM_CONFIG_HTTPS_PROXY: 'http://proxygeadm.etat-ge.ch:3128'
+  NPM_CONFIG_NOPROXY: 'etat-ge.ch'
+  NPM_CONFIG_REGISTRY: 'https://registry.devops.etat-ge.ch/ctinexus/content/repositories/npm-all/'
+
+build:
+  stage: build
+  image: docker-all.devops.etat-ge.ch/library/node:20.11.1
+  tags:
+    - docker
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    when: on_success
+    paths:
+      - dist/
+
 build-and-publish-docker-image:
   stage: build
   image: buildah/stable:v1.30.0
   tags:
     - docker
+  needs:
+    - build
   variables:
     GIT_DEPTH: 1
     GIT_STRATEGY: clone
@@ -36,14 +58,14 @@ build-and-publish-docker-image:
     - cd -
     - buildah logout "${PUBLISH_REGISTRY}"
 
-trigger-openshift-deployment:
+restart-openshift-deployment:
   stage: deploy
   image: ch/ge/afc/oce-cli
   tags:
     - docker
-  when: manual
+  when: on_success
   variables:
     GIT_STRATEGY: none
   script:
     - oc login --insecure-skip-tls-verify --token=$OPENSHIFT_PROJECT_TOKEN --server=https://api.soca.lbdev.etat-ge.ch:6443
-    - oc import-image rapports-bdd:latest --from=oci-snapshot.devops.etat-ge.ch/ch/ge/afc/rapports-bdd:latest --scheduled --confirm
+    - oc rollout restart deployment/deployment-rapports-bdd

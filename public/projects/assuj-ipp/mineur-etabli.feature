@@ -1,0 +1,27 @@
+#language: fr
+Fonctionnalité: Assujettissement des mineurs établis
+
+  Scénario: Mineur établi sans activité
+    Etant donné que la date du jour est le 01.01.2020
+    Et que le calcul de l'assuj IPP concerne la personne 123456789
+    Et que la personne RF est définie par date de naissance 25.08.2005 état vital VIVANT type de résidence GENEVE activite SANS statut indépendant AUCUN type de permis ETABLI statut propriétaire NON_PROPRIETAIRE
+    Et que le revenu est 100000
+    Et qu'il n'existe pas de demande TOU
+    Et que l'assujIpp intiale est type AUCUN étendue AUCUN mode d'imposition AUCUN
+
+    Lorsque le moteur de calcul est lancé pour la date du jour
+
+    Alors l'assuj IPP calculé de la personne principale est type AUCUN étendue AUCUN mode d'imposition AUCUN
+
+  Scénario: Mineur établi avec activité
+    Etant donné que la date du jour est le 01.01.2020
+    Et que le calcul de l'assuj IPP concerne la personne 123456789
+    Et que la personne RF est définie par date de naissance 25.08.2005 état vital VIVANT type de résidence GENEVE activite AVEC statut indépendant AUCUN type de permis ETABLI statut propriétaire NON_PROPRIETAIRE
+    Et que le revenu est 100000
+    Et qu'il n'existe pas de demande TOU
+    Et que l'assujIpp intiale est type AUCUN étendue AUCUN mode d'imposition AUCUN
+
+    Lorsque le moteur de calcul est lancé pour la date du jour
+
+    Alors l'assuj IPP calculé de la personne principale est type IPP étendue ILLIMITEE mode d'imposition IS
+
