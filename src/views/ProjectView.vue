@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { CUCUMBER_REPORTS } from '@/assets/consts'
-import { useRoute, useRouter } from 'vue-router'
-import { computed, ref, watch } from 'vue'
-import type { TreeNode } from 'primevue/treenode'
+import {CUCUMBER_REPORTS} from '@/assets/consts'
+import {useRoute, useRouter} from 'vue-router'
+import {computed, ref, watch} from 'vue'
+import type {TreeNode} from 'primevue/treenode'
 
 import * as Gherkin from '@cucumber/gherkin'
 import * as Messages from '@cucumber/messages'
-import { FEATURE_FILES } from '@/generated/featureFiles'
+import {FEATURE_FILES} from '@/generated/featureFiles'
 import CucumberExamples from '@/components/CucumberExamples.vue'
 import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
@@ -22,40 +22,40 @@ const expandedKeys = ref<{ [key: string]: boolean }>({})
 const items = computed(() => {
   const reportName = CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name
   const baseItems = [
-    { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
+    {label: reportName, command: () => router.push(`/projets/${route.params.slug}`)}
   ]
 
   if (route.params.feature && typeof route.params.feature === 'string') {
-    baseItems.push({ label: route.params.feature, command: () => Promise.resolve() })
+    baseItems.push({label: route.params.feature, command: () => Promise.resolve()})
   }
 
   return baseItems
 })
-const home = { icon: 'pi pi-home', command: () => router.push('/') }
+const home = {icon: 'pi pi-home', command: () => router.push('/')}
 
 watch(
-  () => route.params.feature as string,
-  (featurePathParam) => {
-    featuresTreeNode.value = []
-    expandedKeys.value = {
-      [featurePathParam]: true
-    }
+    () => route.params.feature as string,
+    (featurePathParam) => {
+      featuresTreeNode.value = []
+      expandedKeys.value = {
+        [featurePathParam]: true
+      }
 
-    FEATURE_FILES
-      .filter((path) => path.startsWith('/projects/' + route.params.slug))
-      .forEach((featureFilePath) => {
-        fetch(featureFilePath)
-          .then((body) => body.text())
-          .then((featureFileContent) => buildFeatureNode(parseFeatureFile(featureFileContent)))
-          .then((featureNode) => {
-            if (featureNode && (!featurePathParam || featurePathParam === featureNode.label)) {
-              featuresTreeNode.value.push(featureNode)
-              featuresTreeNode.value.sort(compareTreeNodes)
-            }
+      FEATURE_FILES
+          .filter((path) => path.startsWith('/projects/' + route.params.slug))
+          .forEach((featureFilePath) => {
+            fetch(featureFilePath)
+                .then((body) => body.text())
+                .then((featureFileContent) => buildFeatureNode(parseFeatureFile(featureFileContent)))
+                .then((featureNode) => {
+                  if (featureNode && (!featurePathParam || featurePathParam === featureNode.label)) {
+                    featuresTreeNode.value.push(featureNode)
+                    featuresTreeNode.value.sort(compareTreeNodes)
+                  }
+                })
           })
-      })
-  },
-  { immediate: true }
+    },
+    {immediate: true}
 )
 
 const parseFeatureFile = (text: string) => {
@@ -154,27 +154,25 @@ const compareTreeNodes = (a: TreeNode, b: TreeNode) => {
 </script>
 
 <template>
-  <Breadcrumb :model="items" :home="home" />
+  <Breadcrumb :model="items" :home="home"/>
   <div v-if="featuresTreeNode">
     <Tree :value="featuresTreeNode" :filter="true" filterMode="lenient" filterBy="label,concatenatedTags"
           :expandedKeys="expandedKeys">
       <template #default="slotProps">
-        <div class="node">
-          <CucumberTags :tags="slotProps.node.data?.tags" />
-          <div class="title">
+        <CucumberTags :tags="slotProps.node.data?.tags"/>
+        <div class="title">
                   <span v-if="slotProps.node.feature">
                     <router-link :to="{ params: { ...$route.params, feature: slotProps.node.label } }">
                       <i class="pi pi-link"></i>
                     </router-link>
                 </span>
-            <b>&nbsp;{{ slotProps.node.data?.keyword }} : </b> {{ slotProps.node.label }}
-          </div>
-          <div class="description" v-if="slotProps.node.data?.description">
-            {{ slotProps.node.data.description }}
-          </div>
-          <CucumberSteps v-if="slotProps.node.data?.steps" :steps="slotProps.node.data?.steps" />
-          <CucumberExamples v-if="slotProps.node.data?.examples" :examples="slotProps.node.data?.examples" />
+          <b>&nbsp;{{ slotProps.node.data?.keyword }} : </b> {{ slotProps.node.label }}
         </div>
+        <div class="description" v-if="slotProps.node.data?.description">
+          {{ slotProps.node.data.description }}
+        </div>
+        <CucumberSteps v-if="slotProps.node.data?.steps" :steps="slotProps.node.data?.steps"/>
+        <CucumberExamples v-if="slotProps.node.data?.examples" :examples="slotProps.node.data?.examples"/>
       </template>
     </Tree>
   </div>
@@ -182,10 +180,6 @@ const compareTreeNodes = (a: TreeNode, b: TreeNode) => {
 </template>
 
 <style scoped>
-.node {
-  padding-top: 10px;
-}
-
 .description {
   white-space: pre-wrap;
   word-wrap: break-word;

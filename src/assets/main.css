@@ -12,3 +12,7 @@ html {
   padding: 0;
   font-family: Arial, sans-serif;
 }
+
+.p-tree-node-toggle-button {
+  align-self: start;
+}
