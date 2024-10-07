@@ -184,8 +184,9 @@ Fonctionnalité: Transfert de millieme
               valeurTerrains: [{prixEstime: 22322.0}]
     """
 
-    Et il y a 1 message d'erreur sur l'opération
+    Et il y a 2 message d'erreur sur l'opération
     Et il existe un message d'erreur "Un lot PPE ne contient pas de lot RF" sur l'opération
+    Et il existe un message d'erreur "La somme des nouvelles valeurs est différente de la somme des valeurs de la consolidation. Le delta est de : 2.00. Total consolidation: 100000.00, Total prévisualisation: 100002.00" sur l'opération
 
     Quand l'opération de transfert est validée
     Alors il n'y a pas d'erreur lors de la publication de la session
