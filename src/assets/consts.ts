@@ -10,7 +10,9 @@ const TRANSLATIONS: CucumberReportProject[] = [
   { name: 'RVI', slug: 'rvi-backend' },
   { name: 'Tax Immo', slug: 'tax-immo-backend' },
   { name: 'Changement periode assuj', slug: 'form-chgt-assuj-backend' },
-  { name: 'Mes documents', slug: 'mesdocuments-backend' }
+  { name: 'Mes documents', slug: 'mesdocuments-backend' },
+  { name: 'Mes comptes', slug: 'mescomptes-backend' },
+  { name: 'Page d\'acceuil', slug: 'pageaccueil-backend' },
 ]
 
 const IGNORED_SLUG = ['urbafc-backend-template']
