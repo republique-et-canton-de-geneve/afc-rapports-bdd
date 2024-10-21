@@ -13,6 +13,7 @@ const TRANSLATIONS: CucumberReportProject[] = [
   { name: 'Mes documents', slug: 'mesdocuments-backend' },
   { name: 'Mes comptes', slug: 'mescomptes-backend' },
   { name: 'Page d\'acceuil', slug: 'pageaccueil-backend' },
+  { name: 'RabbitMQ Admin', slug: 'rabbitmq-admin-backend' },
 ]
 
 const IGNORED_SLUG = ['urbafc-backend-template']
