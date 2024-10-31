@@ -25,4 +25,12 @@ Fonctionnalité: F3 - Détermination du libellé en fonction du type de prestati
         | 10   | CRPROTEST      |  Non notifié  |  5000    |  Total:                      | Total car prestation CRPROTEST et solde débiteur                                                |
         | 11   | CRPROTEST      |  Non notifié  |  -500    |  Total:                      | Total car prestation CRPROTEST et solde créditeur                                               |
         | 12   | CRPROTEST      |  Non notifié  |  0       |  Total:                      | Total car prestation CRPROTEST et solde à zéro                                                  |
+        | 13   | CRPROTEST      |  Notifié      |  -500    |  Contribution suppl. versée: | Contribution suppl. versée car prestation CRPROTEST avec bordereau notifié et solde créditeur   |
+        | 14   | CRCATHCHR      |  Notifié      |  0       |  Total:                      | Total car prestation CRCATHCHR et solde à zéro                                                  |
+        | 15   | CRCATHCHR      |  Non notifié  |  5000    |  Total:                      | Total car prestation CRCATHCHR et solde débiteur                                                |
+        | 16   | CRCATHROM      |  Non notifié  |  -500    |  Total:                      | Total car prestation CRCATHROM et solde créditeur                                               |
+        | 17   | CRCATHROM      |  Non notifié  |  0       |  Total:                      | Total car prestation CRCATHROM et solde à zéro                                                  |
+        | 18   | CRCATHCHR      |  Notifié      |  5000    |  Contribution non versée:    | Contribution non versée car prestation CRCATHCHR avec bordereau notifié et solde débiteur       |
+        | 18   | CRCATHROM      |  Notifié      |  5000    |  Contribution non versée:    | Contribution non versée car prestation CRCATHROM avec bordereau notifié et solde débiteur       |
+
 
