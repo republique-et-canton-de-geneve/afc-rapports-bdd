@@ -1,8 +1,9 @@
 #language: fr
-Fonctionnalité: F3 - Détermination du texte de libellé du solde du relevé de compte
+Fonctionnalité: F3 - Détermination du libellé en fonction du type de prestation, type de bordereau et du solde du compte
 
-  Règle: R1 - Le texte du libellé du solde d'un relevé de compte dépend des éléments suivants :
+  Règle: R1 - Le texte du libellé dépend des éléments suivants :
   - Le type de prestation (ICC, IFD, ICHIENS...)
+  - Le type de bordereau
   - Le solde du compte : débiteur, créditeur, à zéro
   - L'existence ou non d'un bordereau de notification dans les mouvements du compte
 

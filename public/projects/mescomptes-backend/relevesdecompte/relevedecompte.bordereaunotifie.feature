@@ -8,7 +8,7 @@ Fonctionnalité: F4 - Vérification de l'existence d'un bordereau notifié sur u
       Etant donné que le contribuable sélectionne un compte avec ces mouvements :
         | CodeTypeMouvement |
         | BORD              |
-      Quand le système vérifie s'il existe une notification par bordereau
+      Quand le système vérifie s'il existe une notification bordereau
       Alors le système renvoie qu'il existe un bordereau notifié
 
     Scénario: 2 - Vérification d'un compte avec 2 mouvements dont un bordereau
@@ -16,7 +16,7 @@ Fonctionnalité: F4 - Vérification de l'existence d'un bordereau notifié sur u
         | CodeTypeMouvement |
         | BORD              |
         | SUPP              |
-      Quand le système vérifie s'il existe une notification par bordereau
+      Quand le système vérifie s'il existe une notification bordereau
       Alors le système renvoie qu'il existe un bordereau notifié
 
     Scénario: 3 - Vérification d'un compte avec 3 mouvements sans bordereau
@@ -24,10 +24,10 @@ Fonctionnalité: F4 - Vérification de l'existence d'un bordereau notifié sur u
         | CodeTypeMouvement |
         | IMPIA             |
         | IFI               |
-      Quand le système vérifie s'il existe une notification par bordereau
+      Quand le système vérifie s'il existe une notification bordereau
       Alors le système renvoie qu'il n'existe pas de bordereau notifié
 
     Scénario: 4 - Vérification d'un compte sans mouvement
       Etant donné que le contribuable sélectionne un compte n'ayant aucun mouvement
-      Quand le système vérifie s'il existe une notification par bordereau
+      Quand le système vérifie s'il existe une notification bordereau
       Alors le système renvoie qu'il n'existe pas de bordereau notifié
