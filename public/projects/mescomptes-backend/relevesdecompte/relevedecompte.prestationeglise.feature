@@ -1,7 +1,7 @@
 #language: fr
 Fonctionnalité: F2 - Détermination du compte de type Eglise
 
-  Règle : R1 - Un compte est de type Eglise si le type prestation est :
+  Règle: R1 - Un compte est de type Eglise si le type prestation est :
   - CRCATHROM
   - CRCATHCHR
   - CRPROTEST
