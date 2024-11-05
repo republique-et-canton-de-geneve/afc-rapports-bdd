@@ -12,7 +12,7 @@ const TRANSLATIONS: CucumberReportProject[] = [
   { name: 'Changement periode assuj', slug: 'form-chgt-assuj-backend' },
   { name: 'Mes documents', slug: 'mesdocuments-backend' },
   { name: 'Mes comptes', slug: 'mescomptes-backend' },
-  { name: 'Page d\'acceuil', slug: 'pageaccueil-backend' },
+  { name: 'Page d\'accueil', slug: 'pageaccueil-backend' },
   { name: 'RabbitMQ Admin', slug: 'rabbitmq-admin-backend' },
   { name: 'Texte dynamique', slug: 'texte-dynamique-backend' },
 ]
