@@ -11,7 +11,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/projets/:slug/:feature?',
+      path: '/projets/:slug/:feature(.*)?',
       name: 'projets',
       component: ProjectView
     }
