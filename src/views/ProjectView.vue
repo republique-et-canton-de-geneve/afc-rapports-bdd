@@ -14,11 +14,11 @@ import CucumberTags from '@/components/CucumberTags.vue'
 const route = useRoute()
 const router = useRouter()
 
-// TreeNode
+// Variables réactives pour l'arbre des fonctionnalités et les clés étendues
 const featuresTreeNode = ref<TreeNode[]>([])
 const expandedKeys = ref<{ [key: string]: boolean }>({})
 
-// pour afficher le bon nom dans le fil d'ariane (breadcrumb)
+// Fonction pour trouver un nœud dans l'arbre par sa clé (pour le fil d'ariane)
 const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefined => {
   for (const node of nodes) {
     if (node.key === key) {
@@ -34,9 +34,11 @@ const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefined => 
   return undefined
 }
 
-// BreadCrumb
+// Données pour le fil d'Ariane (breadcrumb)
 const breadcrumbItems = ref<any[]>([])
+const home = { icon: 'pi pi-home', command: () => router.push('/') }
 
+// Fonction pour construire le fil d'Ariane
 const buildBreadcrumb = (decodedFeaturePath: string, reportName: string) => {
   const parts = decodedFeaturePath.split('/')
   let currentKey = ''
@@ -57,56 +59,32 @@ const buildBreadcrumb = (decodedFeaturePath: string, reportName: string) => {
   }
 }
 
-const items = computed(() => {
-  const reportName = CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || '';
-  const baseItems = [
-    { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
-  ]
+// Fonction pour charger les fonctionnalités
+const loadFeatures = async (paths: string[], baseDir: string) => {
+  const promises = paths.map(async (featureFilePath) => {
+    const body = await fetch(featureFilePath)
+    const featureFileContent = await body.text()
+    const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+    if (featureNode) {
+      buildTreeStructure(featureFilePath, featureNode, baseDir)
+    }
+  })
+  await Promise.all(promises)
+}
 
-  if (route.params.feature && typeof route.params.feature === 'string') {
-    const featurePath = decodeURIComponent(route.params.feature)
-    const parts = featurePath.split('/')
-    parts.forEach((part, index) => {
-      const feature = parts.slice(0, index + 1).join('/')
-      baseItems.push({
-        label: part,
-        command: () => {
-          return router.push({ params: { ...route.params, feature: encodeURIComponent(feature) } })
-        }
-      })
-    })
-  }
-
-  return baseItems
-})
-const home = { icon: 'pi pi-home', command: () => router.push('/') }
-
+// Watcher sur le paramètre de route 'feature'
 watch(
   () => route.params.feature as string,
-  (featurePathParam) => {
+  async (featurePathParam) => {
     featuresTreeNode.value = []
 
     const baseDir = '/projects/' + route.params.slug
-    const reportName = CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || '';
+    const reportName =
+      CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || ''
 
     breadcrumbItems.value = [
       { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
     ]
-
-    const loadFeatures = (paths: string[]) => {
-      const promises = paths.map((featureFilePath) => {
-        return fetch(featureFilePath)
-          .then((body) => body.text())
-          .then((featureFileContent) => buildFeatureNode(parseFeatureFile(featureFileContent)))
-          .then((featureNode) => {
-            if (featureNode) {
-              buildTreeStructure(featureFilePath, featureNode, baseDir)
-            }
-          })
-      })
-
-      return Promise.all(promises)
-    }
 
     if (featurePathParam) {
       const decodedFeaturePath = decodeURIComponent(featurePathParam)
@@ -116,42 +94,37 @@ watch(
 
       const featureFilePath = baseDir + '/' + decodedFeaturePath
 
-      // Vérifier si le chemin correspond à un répertoire ou un fichier
+      // Vérifier si le chemin correspond à un fichier ou un répertoire
       if (FEATURE_FILES.includes(featureFilePath)) {
         // C'est un fichier de fonctionnalité unique
-        fetch(featureFilePath)
-          .then((body) => body.text())
-          .then((featureFileContent) => buildFeatureNode(parseFeatureFile(featureFileContent)))
-          .then((featureNode) => {
-            if (featureNode) {
-              buildTreeStructure(featureFilePath, featureNode, baseDir)
-
-              // Construire le fil d'Ariane
-              buildBreadcrumb(decodedFeaturePath, reportName)
-            }
-          })
+        const body = await fetch(featureFilePath)
+        const featureFileContent = await body.text()
+        const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+        if (featureNode) {
+          buildTreeStructure(featureFilePath, featureNode, baseDir)
+          buildBreadcrumb(decodedFeaturePath, reportName)
+        }
       } else {
         // C'est un répertoire, charger toutes les fonctionnalités dans ce répertoire
         const featurePaths = FEATURE_FILES.filter((path) => path.startsWith(featureFilePath + '/'))
-        loadFeatures(featurePaths).then(() => {
-          // Construire le fil d'Ariane
-          buildBreadcrumb(decodedFeaturePath, reportName)
-        })
+        await loadFeatures(featurePaths, baseDir)
+        buildBreadcrumb(decodedFeaturePath, reportName)
       }
     } else {
       // Charger toutes les fonctionnalités
       expandedKeys.value = {}
-      loadFeatures(FEATURE_FILES.filter((path) => path.startsWith(baseDir))).then(() => {
-        // Le fil d'Ariane ne contient que le nom du projet
-        breadcrumbItems.value = [
-          { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
-        ]
-      })
+      const featurePaths = FEATURE_FILES.filter((path) => path.startsWith(baseDir))
+      await loadFeatures(featurePaths, baseDir)
+      // Le fil d'Ariane ne contient que le nom du projet
+      breadcrumbItems.value = [
+        { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
+      ]
     }
   },
   { immediate: true }
 )
 
+// Fonction pour parser un fichier de fonctionnalité Gherkin
 const parseFeatureFile = (text: string) => {
   let builder = new Gherkin.AstBuilder(Messages.IdGenerator.uuid())
   let matcher = new Gherkin.GherkinClassicTokenMatcher()
@@ -159,6 +132,7 @@ const parseFeatureFile = (text: string) => {
   return parser.parse(text) as Messages.GherkinDocument
 }
 
+// Fonction pour construire la structure de l'arbre des fonctionnalités
 const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: string): void => {
   const parts = filePath
     .replace(new RegExp(`^${baseDir}/?|/$`, 'g'), '')
@@ -178,28 +152,28 @@ const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: st
         data: index === parts.length - 1 ? featureNode.data : undefined,
         feature: index === parts.length - 1 ? featureNode.feature : undefined,
         concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
-        type: index === parts.length - 1 ? 'feature' : 'directory' // Ajout de la propriété type
+        type: index === parts.length - 1 ? 'feature' : 'directory'
       }
       currentLevel.push(existingNode)
       currentLevel.sort(compareTreeNodes)
-    } else {
-      // Mise à jour du type si nécessaire
-      existingNode.type = index === parts.length - 1 ? 'feature' : 'directory'
     }
     if (index === parts.length - 1) {
       // Mise à jour des informations du nœud de fonctionnalité
-      existingNode.label = featureNode.label
-      existingNode.children = featureNode.children
-      existingNode.data = featureNode.data
-      existingNode.concatenatedTags = featureNode.concatenatedTags
-      existingNode.feature = featureNode.feature
-      existingNode.leaf = featureNode.leaf
-      existingNode.type = 'feature' // Assurer que le type est 'feature'
+      Object.assign(existingNode, {
+        label: featureNode.label,
+        children: featureNode.children,
+        data: featureNode.data,
+        concatenatedTags: featureNode.concatenatedTags,
+        feature: featureNode.feature,
+        leaf: featureNode.leaf,
+        type: 'feature'
+      })
     }
     currentLevel = existingNode.children!
   })
 }
 
+// Fonction pour construire un nœud de fonctionnalité
 const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeNode | undefined => {
   const feature = document?.feature
   if (!feature) return undefined
@@ -215,6 +189,7 @@ const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeN
   } as TreeNode
 }
 
+// Fonction pour construire les enfants d'une fonctionnalité
 const buildFeatureChildren = (features: readonly Messages.FeatureChild[]): TreeNode[] => {
   return features
     .map((featureChild: Messages.FeatureChild) => {
@@ -230,6 +205,8 @@ const buildFeatureChildren = (features: readonly Messages.FeatureChild[]): TreeN
     })
     .filter(Boolean) as TreeNode[]
 }
+
+// Fonction pour construire un nœud de scénario
 const buildScenarioNode = (scenario: Messages.Scenario) => {
   return {
     key: scenario.id,
@@ -240,6 +217,7 @@ const buildScenarioNode = (scenario: Messages.Scenario) => {
   } as TreeNode
 }
 
+// Fonction pour construire un nœud de règle
 const buildRuleNode = (rule: Messages.Rule) => {
   return {
     key: rule.id,
@@ -252,17 +230,21 @@ const buildRuleNode = (rule: Messages.Rule) => {
   } as TreeNode
 }
 
-const buildRuleChildren = (elements: readonly Messages.RuleChild[]) => {
-  return elements.map((ruleChild: Messages.RuleChild) => {
-    if (ruleChild.scenario) {
-      return buildScenarioNode(ruleChild.scenario)
-    }
-    if (ruleChild.background) {
-      return buildBackgroundNode(ruleChild.background)
-    }
-  })
+// Fonction pour construire les enfants d'une règle
+const buildRuleChildren = (elements: readonly Messages.RuleChild[]): TreeNode[] => {
+  return elements
+    .map((ruleChild: Messages.RuleChild) => {
+      if (ruleChild.scenario) {
+        return buildScenarioNode(ruleChild.scenario)
+      }
+      if (ruleChild.background) {
+        return buildBackgroundNode(ruleChild.background)
+      }
+    })
+    .filter(Boolean) as TreeNode[]
 }
 
+// Fonction pour construire un nœud de background
 const buildBackgroundNode = (background: Messages.Background) => {
   return {
     key: background.id,
@@ -272,37 +254,31 @@ const buildBackgroundNode = (background: Messages.Background) => {
   } as TreeNode
 }
 
-const compareTreeNodes = (a: TreeNode, b: TreeNode) => {
-  const aType = a.type
-  const bType = b.type
+// Fonction de comparaison pour trier les nœuds de l'arbre
+const compareTreeNodes = (a: TreeNode, b: TreeNode): number => {
+  if (a.type === 'directory' && b.type !== 'directory') return -1
+  if (a.type !== 'directory' && b.type === 'directory') return 1
 
-  if (aType === 'directory' && bType !== 'directory') {
-    return -1 // a est un répertoire, b n'est pas un répertoire, a vient en premier
-  } else if (aType !== 'directory' && bType === 'directory') {
-    return 1 // b est un répertoire, a n'est pas un répertoire, b vient en premier
-  } else {
-    // Les deux sont du même type
-    if (!a.label || !b.label) {
-      return 0
+  if (!a.label || !b.label) return 0
+
+  if (a.type === 'feature' && b.type === 'feature') {
+    const numA = extractFeatureNumber(a.label)
+    const numB = extractFeatureNumber(b.label)
+    if (numA !== null && numB !== null) {
+      return numA - numB
     }
-
-    // Si les deux sont des fonctionnalités, trier par numéro de fonctionnalité
-    if (aType === 'feature' && bType === 'feature') {
-      // Extraction des numéros de fonctionnalité (par exemple, F1, F2)
-      const numA = parseInt(a.label.match(/F(\d+)/)?.[1] || '', 10)
-      const numB = parseInt(b.label.match(/F(\d+)/)?.[1] || '', 10)
-
-      if (!isNaN(numA) && !isNaN(numB)) {
-        return numA - numB // Tri numérique par numéro de fonctionnalité
-      }
-
-      // Si pas de numéros, tri alphabétique
-      return a.label.localeCompare(b.label)
-    }
-
-    // Pour les répertoires ou autres types, tri alphabétique
-    return a.label.localeCompare(b.label)
   }
+
+  return a.label.localeCompare(b.label)
+}
+
+// Fonction pour extraire le numéro de la fonctionnalité
+const extractFeatureNumber = (label: string): number | null => {
+  const match = label.match(/F(\d+)/)
+  if (match && match[1]) {
+    return parseInt(match[1], 10)
+  }
+  return null
 }
 </script>
 
@@ -371,22 +347,18 @@ const compareTreeNodes = (a: TreeNode, b: TreeNode) => {
 
 <style scoped>
 .directory-link {
-  color: inherit; /* Utiliser la couleur de texte héritée */
-  text-decoration: none; /* Supprimer le soulignement */
+  color: inherit;
+  text-decoration: none;
+  cursor: default;
 }
 
 .directory-link:hover,
 .directory-link:active,
 .directory-link:visited {
-  color: inherit; /* Empêcher le changement de couleur au survol, au clic et pour les liens visités */
+  color: inherit;
   text-decoration: none;
 }
 
-.directory-link {
-  cursor: default; /* Le curseur reste le même (pas de pointeur de lien) */
-}
-
-/* Vos autres styles existants */
 .description {
   white-space: pre-wrap;
   word-wrap: break-word;
