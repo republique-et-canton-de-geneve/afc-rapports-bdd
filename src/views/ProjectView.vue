@@ -12,6 +12,15 @@ import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
 
 const BASE_PROJECT_PATH = "/projets/";
+const BASE_PROJECTS_DIR = "/projects/";
+const SLASH = "/";
+const FEATURE_SEPARATOR = ":";
+const EMPTY_STRING = "";
+const NODE_TYPE_DIRECTORY = "directory";
+const NODE_TYPE_FEATURE = "feature";
+const NODE_TYPE_RULE = "rule";
+const NODE_TYPE_SCENARIO = "scenario";
+const NODE_TYPE_BACKGROUND = "background";
 
 const route = useRoute()
 const router = useRouter()
@@ -38,20 +47,20 @@ const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefined => 
 
 // Données pour le fil d'Ariane (breadcrumb)
 const breadcrumbItems = ref<any[]>([])
-const home = { icon: 'pi pi-home', command: () => router.push('/') }
+const home = { icon: 'pi pi-home', command: () => router.push(SLASH) }
 
 // Fonction pour construire le fil d'Ariane
 const buildBreadcrumb = (decodedFeaturePath: string, reportName: string) => {
-  const parts = decodedFeaturePath.split('/')
-  let currentKey = ''
+  const parts = decodedFeaturePath.split(SLASH)
+  let currentKey = EMPTY_STRING
   breadcrumbItems.value = [
     { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
   ]
   for (let i = 0; i < parts.length; i++) {
-    currentKey += (currentKey ? '/' : '') + parts[i]
+    currentKey += (currentKey ? SLASH : EMPTY_STRING) + parts[i]
     const node = findNodeByKey(featuresTreeNode.value, currentKey)
     const label = node?.label || parts[i]
-    const feature = parts.slice(0, i + 1).join('/')
+    const feature = parts.slice(0, i + 1).join(SLASH)
     breadcrumbItems.value.push({
       label: label,
       command: () => {
@@ -80,9 +89,9 @@ watch(
   async (featurePathParam) => {
     featuresTreeNode.value = []
 
-    const baseDir = '/projects/' + route.params.slug
+    const baseDir = `${BASE_PROJECTS_DIR}${route.params.slug}`
     const reportName =
-      CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || ''
+      CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || EMPTY_STRING
 
     breadcrumbItems.value = [
       { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
@@ -94,7 +103,7 @@ watch(
         [decodedFeaturePath]: true
       }
 
-      const featureFilePath = baseDir + '/' + decodedFeaturePath
+      const featureFilePath = baseDir + SLASH + decodedFeaturePath
 
       // Vérifier si le chemin correspond à un fichier ou un répertoire
       if (FEATURE_FILES.includes(featureFilePath)) {
@@ -108,7 +117,7 @@ watch(
         }
       } else {
         // C'est un répertoire, charger toutes les fonctionnalités dans ce répertoire
-        const featurePaths = FEATURE_FILES.filter((path) => path.startsWith(featureFilePath + '/'))
+        const featurePaths = FEATURE_FILES.filter((path) => path.startsWith(featureFilePath + SLASH))
         await loadFeatures(featurePaths, baseDir)
         buildBreadcrumb(decodedFeaturePath, reportName)
       }
@@ -137,8 +146,8 @@ const parseFeatureFile = (text: string) => {
 // Fonction pour construire la structure de l'arbre des fonctionnalités
 const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: string): void => {
   const parts = filePath
-    .replace(new RegExp(`^${baseDir}/?|/$`, 'g'), '')
-    .split('/')
+    .replace(new RegExp(`^${baseDir}${SLASH}?|${SLASH}$`, 'g'), EMPTY_STRING)
+    .split(SLASH)
     .filter(Boolean)
 
   let currentLevel = featuresTreeNode.value
@@ -147,14 +156,14 @@ const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: st
     let existingNode = currentLevel.find((node) => node.label === part)
     if (!existingNode) {
       existingNode = {
-        key: parts.slice(0, index + 1).join('/'),
+        key: parts.slice(0, index + 1).join(SLASH),
         label: index === parts.length - 1 ? featureNode.label : part,
         children: [],
         leaf: false,
         data: index === parts.length - 1 ? featureNode.data : undefined,
         feature: index === parts.length - 1 ? featureNode.feature : undefined,
         concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
-        type: index === parts.length - 1 ? 'feature' : 'directory'
+        type: index === parts.length - 1 ? NODE_TYPE_FEATURE : NODE_TYPE_DIRECTORY
       }
       currentLevel.push(existingNode)
       currentLevel.sort(compareTreeNodes)
@@ -168,7 +177,7 @@ const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: st
         concatenatedTags: featureNode.concatenatedTags,
         feature: featureNode.feature,
         leaf: featureNode.leaf,
-        type: 'feature'
+        type: NODE_TYPE_FEATURE
       })
     }
     currentLevel = existingNode.children!
@@ -187,7 +196,7 @@ const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeN
     children: buildFeatureChildren(feature.children),
     concatenatedTags: feature.tags.map((tag) => tag.name).join(),
     feature: true,
-    type: 'feature'
+    type: NODE_TYPE_FEATURE
   } as TreeNode
 }
 
@@ -215,7 +224,8 @@ const buildScenarioNode = (scenario: Messages.Scenario) => {
     data: scenario,
     label: scenario.name,
     leaf: true,
-    concatenatedTags: scenario.tags.map((tag) => tag.name).join()
+    concatenatedTags: scenario.tags.map((tag) => tag.name).join(),
+    type: NODE_TYPE_SCENARIO
   } as TreeNode
 }
 
@@ -228,7 +238,7 @@ const buildRuleNode = (rule: Messages.Rule) => {
     leaf: false,
     children: buildRuleChildren(rule.children),
     concatenatedTags: rule.tags.map((tag) => tag.name).join(),
-    rule: true
+    type: NODE_TYPE_RULE
   } as TreeNode
 }
 
@@ -252,18 +262,19 @@ const buildBackgroundNode = (background: Messages.Background) => {
     key: background.id,
     data: background,
     label: background.name,
-    leaf: true
+    leaf: true,
+    type: NODE_TYPE_BACKGROUND
   } as TreeNode
 }
 
 // Fonction de comparaison pour trier les nœuds de l'arbre
 const compareTreeNodes = (a: TreeNode, b: TreeNode): number => {
-  if (a.type === 'directory' && b.type !== 'directory') return -1
-  if (a.type !== 'directory' && b.type === 'directory') return 1
+  if (a.type === NODE_TYPE_DIRECTORY && b.type !== NODE_TYPE_DIRECTORY) return -1
+  if (a.type !== NODE_TYPE_DIRECTORY && b.type === NODE_TYPE_DIRECTORY) return 1
 
   if (!a.label || !b.label) return 0
 
-  if (a.type === 'feature' && b.type === 'feature') {
+  if (a.type === NODE_TYPE_FEATURE && b.type === NODE_TYPE_FEATURE) {
     const numA = extractFeatureNumber(a.label)
     const numB = extractFeatureNumber(b.label)
     if (numA !== null && numB !== null) {
@@ -298,10 +309,10 @@ const extractFeatureNumber = (label: string): number | null => {
         <CucumberTags :tags="slotProps.node.data?.tags" />
         <div class="title">
           <!-- Répertoires cliquables avec icône et label -->
-          <span v-if="slotProps.node.type === 'directory'">
+          <span v-if="slotProps.node.type === NODE_TYPE_DIRECTORY">
             <router-link
               :to="{
-                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || '') }
+                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
               }"
               class="directory-link"
             >
@@ -310,17 +321,17 @@ const extractFeatureNumber = (label: string): number | null => {
             </router-link>
           </span>
           <!-- Permalinks pour les fonctionnalités -->
-          <span v-else-if="slotProps.node.feature">
+          <span v-else-if="slotProps.node.type === NODE_TYPE_FEATURE">
             <router-link
               :to="{
-                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || '') }
+                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
               }"
             >
               <i class="pi pi-link"></i>
             </router-link>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.feature || slotProps.node.rule"> : </span>
+            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
             <span v-else>&nbsp;</span>
             <span>{{ slotProps.node.label }}</span>
           </span>
@@ -328,7 +339,7 @@ const extractFeatureNumber = (label: string): number | null => {
           <span v-else>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.feature || slotProps.node.rule"> : </span>
+            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
             <span v-else>&nbsp;</span>
             <span>{{ slotProps.node.label }}</span>
           </span>
