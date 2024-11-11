@@ -145,45 +145,79 @@ const parseFeatureFile = (text: string) => {
 
 // Fonction pour construire la structure de l'arbre des fonctionnalités
 const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: string): void => {
-  const parts = filePath
-    // pour supprimer la portion de base du chemin au début et les '/' en début et fin
-    .replace(new RegExp(`^${baseDir}${SLASH}?|${SLASH}$`, 'g'), EMPTY_STRING)
-    .split(SLASH)
-    .filter(Boolean)
-
-  let currentLevel = featuresTreeNode.value
+  const parts = extractFilePathParts(filePath, baseDir);
+  let currentLevel = featuresTreeNode.value;
 
   parts.forEach((part, index) => {
-    let existingNode = currentLevel.find((node) => node.label === part)
-    if (!existingNode) {
-      existingNode = {
-        key: parts.slice(0, index + 1).join(SLASH),
-        label: index === parts.length - 1 ? featureNode.label : part,
-        children: [],
-        leaf: false,
-        data: index === parts.length - 1 ? featureNode.data : undefined,
-        feature: index === parts.length - 1 ? featureNode.feature : undefined,
-        concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
-        type: index === parts.length - 1 ? NODE_TYPE_FEATURE : NODE_TYPE_DIRECTORY
-      }
-      currentLevel.push(existingNode)
-      currentLevel.sort(compareTreeNodes)
-    }
-    if (index === parts.length - 1) {
-      // Mise à jour des informations du nœud de fonctionnalité
-      Object.assign(existingNode, {
-        label: featureNode.label,
-        children: featureNode.children,
-        data: featureNode.data,
-        concatenatedTags: featureNode.concatenatedTags,
-        feature: featureNode.feature,
-        leaf: featureNode.leaf,
-        type: NODE_TYPE_FEATURE
-      })
-    }
-    currentLevel = existingNode.children!
-  })
-}
+    let existingNode = findOrCreateNode(currentLevel, part, index, parts, featureNode);
+    updateFeatureNodeIfNecessary(existingNode, featureNode, index, parts.length);
+    currentLevel = existingNode.children!;
+  });
+};
+
+// Fonction pour extraire les parties du chemin de fichier
+const extractFilePathParts = (filePath: string, baseDir: string): string[] => {
+  return filePath
+    .replace(new RegExp(`^${baseDir}/?|/$`, 'g'), '')
+    .split('/')
+    .filter(Boolean);
+};
+
+// Fonction pour trouver ou créer un nœud existant
+const findOrCreateNode = (
+  currentLevel: TreeNode[],
+  part: string,
+  index: number,
+  parts: string[],
+  featureNode: TreeNode
+): TreeNode => {
+  let existingNode = currentLevel.find((node) => node.label === part);
+  if (!existingNode) {
+    existingNode = createNode(part, index, parts, featureNode);
+    currentLevel.push(existingNode);
+    currentLevel.sort(compareTreeNodes);
+  }
+  return existingNode;
+};
+
+// Fonction pour créer un nœud
+const createNode = (
+  part: string,
+  index: number,
+  parts: string[],
+  featureNode: TreeNode
+): TreeNode => {
+  return {
+    key: parts.slice(0, index + 1).join('/'),
+    label: index === parts.length - 1 ? featureNode.label : part,
+    children: [],
+    leaf: false,
+    data: index === parts.length - 1 ? featureNode.data : undefined,
+    feature: index === parts.length - 1 ? featureNode.feature : undefined,
+    concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
+    type: index === parts.length - 1 ? 'feature' : 'directory'
+  };
+};
+
+// Fonction pour mettre à jour le nœud de fonctionnalité si nécessaire
+const updateFeatureNodeIfNecessary = (
+  existingNode: TreeNode,
+  featureNode: TreeNode,
+  index: number,
+  partsLength: number
+): void => {
+  if (index === partsLength - 1) {
+    Object.assign(existingNode, {
+      label: featureNode.label,
+      children: featureNode.children,
+      data: featureNode.data,
+      concatenatedTags: featureNode.concatenatedTags,
+      feature: featureNode.feature,
+      leaf: featureNode.leaf,
+      type: 'feature'
+    });
+  }
+};
 
 // Fonction pour construire un nœud de fonctionnalité
 const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeNode | undefined => {
