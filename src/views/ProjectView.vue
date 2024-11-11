@@ -11,6 +11,8 @@ import CucumberExamples from '@/components/CucumberExamples.vue'
 import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
 
+const BASE_PROJECT_PATH = "/projets/";
+
 const route = useRoute()
 const router = useRouter()
 
@@ -43,7 +45,7 @@ const buildBreadcrumb = (decodedFeaturePath: string, reportName: string) => {
   const parts = decodedFeaturePath.split('/')
   let currentKey = ''
   breadcrumbItems.value = [
-    { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
+    { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
   ]
   for (let i = 0; i < parts.length; i++) {
     currentKey += (currentKey ? '/' : '') + parts[i]
@@ -83,7 +85,7 @@ watch(
       CUCUMBER_REPORTS.find((report) => report.slug === route.params.slug)?.name || ''
 
     breadcrumbItems.value = [
-      { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
+      { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
     ]
 
     if (featurePathParam) {
@@ -117,7 +119,7 @@ watch(
       await loadFeatures(featurePaths, baseDir)
       // Le fil d'Ariane ne contient que le nom du projet
       breadcrumbItems.value = [
-        { label: reportName, command: () => router.push(`/projets/${route.params.slug}`) }
+        { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
       ]
     }
   },
