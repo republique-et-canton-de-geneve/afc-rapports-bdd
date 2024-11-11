@@ -146,6 +146,7 @@ const parseFeatureFile = (text: string) => {
 // Fonction pour construire la structure de l'arbre des fonctionnalités
 const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: string): void => {
   const parts = filePath
+    // pour supprimer la portion de base du chemin au début et les '/' en début et fin
     .replace(new RegExp(`^${baseDir}${SLASH}?|${SLASH}$`, 'g'), EMPTY_STRING)
     .split(SLASH)
     .filter(Boolean)
