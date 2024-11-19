@@ -11,16 +11,16 @@ import CucumberExamples from '@/components/CucumberExamples.vue'
 import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
 
-const BASE_PROJECT_PATH = "/projets/";
-const BASE_PROJECTS_DIR = "/projects/";
-const SLASH = "/";
-const FEATURE_SEPARATOR = ":";
-const EMPTY_STRING = "";
-const NODE_TYPE_DIRECTORY = "directory";
-const NODE_TYPE_FEATURE = "feature";
-const NODE_TYPE_RULE = "rule";
-const NODE_TYPE_SCENARIO = "scenario";
-const NODE_TYPE_BACKGROUND = "background";
+const BASE_PROJECT_PATH = '/projets/'
+const BASE_PROJECTS_DIR = '/projects/'
+const SLASH = '/'
+const FEATURE_SEPARATOR = ':'
+const EMPTY_STRING = ''
+const NODE_TYPE_DIRECTORY = 'directory'
+const NODE_TYPE_FEATURE = 'feature'
+const NODE_TYPE_RULE = 'rule'
+const NODE_TYPE_SCENARIO = 'scenario'
+const NODE_TYPE_BACKGROUND = 'background'
 
 const route = useRoute()
 const router = useRouter()
@@ -117,7 +117,9 @@ watch(
         }
       } else {
         // C'est un répertoire, charger toutes les fonctionnalités dans ce répertoire
-        const featurePaths = FEATURE_FILES.filter((path) => path.startsWith(featureFilePath + SLASH))
+        const featurePaths = FEATURE_FILES.filter((path) =>
+          path.startsWith(featureFilePath + SLASH)
+        )
         await loadFeatures(featurePaths, baseDir)
         buildBreadcrumb(decodedFeaturePath, reportName)
       }
@@ -128,7 +130,10 @@ watch(
       await loadFeatures(featurePaths, baseDir)
       // Le fil d'Ariane ne contient que le nom du projet
       breadcrumbItems.value = [
-        { label: reportName, command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`) }
+        {
+          label: reportName,
+          command: () => router.push(`${BASE_PROJECT_PATH}${route.params.slug}`)
+        }
       ]
     }
   },
@@ -145,23 +150,23 @@ const parseFeatureFile = (text: string) => {
 
 // Fonction pour construire la structure de l'arbre des fonctionnalités
 const buildTreeStructure = (filePath: string, featureNode: TreeNode, baseDir: string): void => {
-  const parts = extractFilePathParts(filePath, baseDir);
-  let currentLevel = featuresTreeNode.value;
+  const parts = extractFilePathParts(filePath, baseDir)
+  let currentLevel = featuresTreeNode.value
 
   parts.forEach((part, index) => {
-    let existingNode = findOrCreateNode(currentLevel, part, index, parts, featureNode);
-    updateFeatureNodeIfNecessary(existingNode, featureNode, index, parts.length);
-    currentLevel = existingNode.children!;
-  });
-};
+    let existingNode = findOrCreateNode(currentLevel, part, index, parts, featureNode)
+    updateFeatureNodeIfNecessary(existingNode, featureNode, index, parts.length)
+    currentLevel = existingNode.children!
+  })
+}
 
 // Fonction pour extraire les parties du chemin de fichier
 const extractFilePathParts = (filePath: string, baseDir: string): string[] => {
   return filePath
     .replace(new RegExp(`^${baseDir}/?|/$`, 'g'), '')
     .split('/')
-    .filter(Boolean);
-};
+    .filter(Boolean)
+}
 
 // Fonction pour trouver ou créer un nœud existant
 const findOrCreateNode = (
@@ -171,14 +176,14 @@ const findOrCreateNode = (
   parts: string[],
   featureNode: TreeNode
 ): TreeNode => {
-  let existingNode = currentLevel.find((node) => node.label === part);
+  let existingNode = currentLevel.find((node) => node.label === part)
   if (!existingNode) {
-    existingNode = createNode(part, index, parts, featureNode);
-    currentLevel.push(existingNode);
-    currentLevel.sort(compareTreeNodes);
+    existingNode = createNode(part, index, parts, featureNode)
+    currentLevel.push(existingNode)
+    currentLevel.sort(compareTreeNodes)
   }
-  return existingNode;
-};
+  return existingNode
+}
 
 // Fonction pour créer un nœud
 const createNode = (
@@ -196,8 +201,8 @@ const createNode = (
     feature: index === parts.length - 1 ? featureNode.feature : undefined,
     concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
     type: index === parts.length - 1 ? 'feature' : 'directory'
-  };
-};
+  }
+}
 
 // Fonction pour mettre à jour le nœud de fonctionnalité si nécessaire
 const updateFeatureNodeIfNecessary = (
@@ -215,9 +220,9 @@ const updateFeatureNodeIfNecessary = (
       feature: featureNode.feature,
       leaf: featureNode.leaf,
       type: 'feature'
-    });
+    })
   }
-};
+}
 
 // Fonction pour construire un nœud de fonctionnalité
 const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeNode | undefined => {
@@ -347,7 +352,10 @@ const extractFeatureNumber = (label: string): number | null => {
           <span v-if="slotProps.node.type === NODE_TYPE_DIRECTORY">
             <router-link
               :to="{
-                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
+                params: {
+                  ...$route.params,
+                  feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING)
+                }
               }"
               class="directory-link"
             >
@@ -359,14 +367,23 @@ const extractFeatureNumber = (label: string): number | null => {
           <span v-else-if="slotProps.node.type === NODE_TYPE_FEATURE">
             <router-link
               :to="{
-                params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
+                params: {
+                  ...$route.params,
+                  feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING)
+                }
               }"
             >
               <i class="pi pi-link"></i>
             </router-link>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
+            <span
+              v-if="
+                slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE
+              "
+            >
+              {{ FEATURE_SEPARATOR }}
+            </span>
             <span v-else>&nbsp;</span>
             <span>{{ slotProps.node.label }}</span>
           </span>
@@ -374,7 +391,13 @@ const extractFeatureNumber = (label: string): number | null => {
           <span v-else>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
+            <span
+              v-if="
+                slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE
+              "
+            >
+              {{ FEATURE_SEPARATOR }}
+            </span>
             <span v-else>&nbsp;</span>
             <span>{{ slotProps.node.label }}</span>
           </span>
