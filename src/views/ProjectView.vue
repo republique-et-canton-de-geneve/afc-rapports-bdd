@@ -3,6 +3,7 @@ import { CUCUMBER_REPORTS } from '@/assets/consts'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, ref, watch } from 'vue'
 import type { TreeNode } from 'primevue/treenode'
+import type { TreeFilterEvent } from 'primevue/tree'
 
 import * as Gherkin from '@cucumber/gherkin'
 import * as Messages from '@cucumber/messages'
@@ -333,6 +334,52 @@ const extractFeatureNumber = (label: string): number | null => {
   }
   return null
 }
+
+const updateExpandedKeysOnFilter = (filteredNodes: TreeNode[]) => {
+  const newExpandedKeys: { [key: string]: boolean } = {}
+
+  const traverseAndExpandDirectories = (nodes: TreeNode[]) => {
+    nodes.forEach((node) => {
+      if (node.type === NODE_TYPE_DIRECTORY) {
+        // Déplier uniquement les répertoires
+        if (node.key) {
+          newExpandedKeys[node.key] = true
+        }
+
+        // Continuer de parcourir les enfants pour les répertoires
+        if (node.children) {
+          traverseAndExpandDirectories(node.children)
+        }
+      }
+    })
+  }
+
+  traverseAndExpandDirectories(filteredNodes)
+  expandedKeys.value = newExpandedKeys
+}
+
+const onFilterEvent = (event: TreeFilterEvent) => {
+  const filteredValue = event.value.toLowerCase()
+  const filteredNodes = featuresTreeNode.value.filter((node) =>
+    filterNodeRecursive(node, filteredValue)
+  )
+
+  updateExpandedKeysOnFilter(filteredNodes)
+}
+
+// Fonction récursive pour vérifier si un nœud ou ses enfants correspondent à la recherche
+const filterNodeRecursive = (node: TreeNode, value: string): boolean => {
+  if (
+    node.label?.toLowerCase().includes(value) ||
+    node.concatenatedTags?.toLowerCase().includes(value)
+  ) {
+    return true
+  }
+  if (node.children) {
+    return node.children.some((child) => filterNodeRecursive(child, value))
+  }
+  return false
+}
 </script>
 
 <template>
@@ -344,6 +391,7 @@ const extractFeatureNumber = (label: string): number | null => {
       filterMode="lenient"
       filterBy="label,concatenatedTags"
       :expandedKeys="expandedKeys"
+      @filter="onFilterEvent"
     >
       <template #default="slotProps">
         <CucumberTags :tags="slotProps.node.data?.tags" />
