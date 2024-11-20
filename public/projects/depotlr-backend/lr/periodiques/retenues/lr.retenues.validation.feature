@@ -288,11 +288,12 @@ Fonctionnalité: Validation de la partie Retenues Mensuelles pour une déclarati
       Etant donné que la date du jour est 31.01.2021
       Etant donné que l´utilisateur a créé une nouvelle LR 2021 pour ce DPI
       Etant donné qu'une personne salariée de type contribuable SALARIE a été ajoutée à cette LR avec une période d'activité du 01.01.2021 au 31.01.2021
-      Etant donné que la personne a un adresse domicile à <type_adresse_domicile>
+      Etant donné que la personne a une adresse domicile à <type_adresse_domicile>
       Etant donné que cette personne de type SALARIE a les retenues mensuelles suivantes :
         | Mois    | Prestations soumises | Montant apériodique | Montant déterminant | Retenue IS | Barème | Barème ajusté |
         | Janvier | 10000                | 500                 | 600                 | 2400.53    | A0     | Non           |
       Etant donné que cette personne a un lieu de travail <type_lieu> pour le mois Janvier
+      Etant donné l´utilisateur modifie la personne et met à jour les retenues
       Quand la validation est appliquée sur la retenue avec le groupe de validation Informative
       Alors le système renvoie que la retenue est <résultat>
       Exemples:
@@ -313,11 +314,12 @@ Fonctionnalité: Validation de la partie Retenues Mensuelles pour une déclarati
       Etant donné que la date du jour est 31.01.2021
       Etant donné que l´utilisateur a créé une nouvelle LR 2021 pour ce DPI
       Etant donné qu'une personne salariée de type contribuable ADMIN a été ajoutée à cette LR avec une période d'activité du 01.01.2021 au 31.01.2021
-      Etant donné que la personne a un adresse domicile à <type_adresse_domicile>
+      Etant donné que la personne a une adresse domicile à <type_adresse_domicile>
       Etant donné que cette personne de type ADMIN a les retenues mensuelles suivantes :
         | Mois    | Prestations soumises | Retenue IS |
         | Janvier | 10000                | 2500.00    |
       Etant donné que cette personne a un lieu de travail <type_lieu> pour le mois Janvier
+      Etant donné que l´utilisateur modifie la personne et met à jour les retenues
       Quand la validation est appliquée sur la retenue avec le groupe de validation Informative
       Alors le système renvoie que la retenue est <résultat>
       Exemples:
