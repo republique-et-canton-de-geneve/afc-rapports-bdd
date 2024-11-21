@@ -7,7 +7,7 @@ Fonctionnalité: Validation du travail en France pour une personne périodique
   - Le DPI doit être de type salarié
   - Le type de contribuable doit être salarié
   - Le mois declaré doit être décembre ou toutes les périodes d'activités terminées
-  - Le pays déclaré est la France
+  - Le pays de domicile est la France
 
     Plan du scénario: <Test> : Condition d'application du travail en France (<Observation>)
       Etant donné que la date du jour est <date du jour>

@@ -293,7 +293,7 @@ Fonctionnalité: Validation de la partie Retenues Mensuelles pour une déclarati
         | Mois    | Prestations soumises | Montant apériodique | Montant déterminant | Retenue IS | Barème | Barème ajusté |
         | Janvier | 10000                | 500                 | 600                 | 2400.53    | A0     | Non           |
       Etant donné que cette personne a un lieu de travail <type_lieu> pour le mois Janvier
-      Etant donné l´utilisateur modifie la personne et met à jour les retenues
+      Etant donné l'utilisateur a déjà enregistré la personne et mis à jour les retenues
       Quand la validation est appliquée sur la retenue avec le groupe de validation Informative
       Alors le système renvoie que la retenue est <résultat>
       Exemples:
@@ -319,7 +319,7 @@ Fonctionnalité: Validation de la partie Retenues Mensuelles pour une déclarati
         | Mois    | Prestations soumises | Retenue IS |
         | Janvier | 10000                | 2500.00    |
       Etant donné que cette personne a un lieu de travail <type_lieu> pour le mois Janvier
-      Etant donné que l´utilisateur modifie la personne et met à jour les retenues
+      Etant donné que l'utilisateur a déjà enregistré la personne et mis à jour les retenues
       Quand la validation est appliquée sur la retenue avec le groupe de validation Informative
       Alors le système renvoie que la retenue est <résultat>
       Exemples:
