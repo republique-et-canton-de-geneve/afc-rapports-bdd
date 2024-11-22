@@ -10,7 +10,7 @@ Fonctionnalité: F3 - Détermination du libellé en fonction du type de prestati
     Plan du scénario: Détermination du texte de libellé pour une prestation <CodePrestation>. <Test> -> <Observation>
       Etant donné que le contribuable possède un compte <CodePrestation>, avec bordereau <TypeBordereau> avec montant <Montant>
       Quand le système détermine le texte de libellé du relevé de compte
-      Alors le système renvoie le libellé <Resultat>
+      Alors le système renvoie le libellé de total <Resultat>
       Exemples:
         | Test | CodePrestation | TypeBordereau | Montant | Resultat                    | Observation                                                                                   |
         | 1    | ICC            | Sans impact   | -5000   | Total à payer:              | Total à payer car prestation ICC et solde débiteur                                            |
