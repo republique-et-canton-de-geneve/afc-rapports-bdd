@@ -1,5 +1,5 @@
 #language: fr
-Fonctionnalité: F7 - Vérification du tri des mouvements
+Fonctionnalité: F9 - Vérification du tri des mouvements
 
   Règle: R1 - Une liste de mouvements est correctement triée si :
   - tous les mouvements sont ordonnés par date d'opération, de la plus ancienne à la plus récente
