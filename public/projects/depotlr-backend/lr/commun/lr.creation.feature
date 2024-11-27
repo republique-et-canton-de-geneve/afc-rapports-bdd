@@ -35,4 +35,50 @@ Fonctionnalité: Création d'une nouvelle LR
     Quand l´utilisateur crée une nouvelle LR 2021 pour ce DPI
     Alors le système DepotLR reprend les données de la LR transmise
 
-#  TODO MUST M: Implementer le scenario lorsqu'il y a déjà plusieurs lrs transmises l'année N (vérifier qu'on prend bien la dernière transmise)
+  Scénario: Creation LR à partir Année-1 : les données taux travail en France pour les salariés sont réinitialisées
+    Etant donné un DPI SALARIES
+    Etant donné que la date du jour est 30.12.2025
+    Etant donné qu'il existe une LR Brouillon en 2025 pour ce DPI
+    Etant donné une personne salarie avec un domicile en FR et un taux de travail en France à 20.00 est ajouté au referentiel personne
+    Etant donné une personne salarie avec un domicile en FR et un taux de travail en France à 20.00 est ajouté au referentiel personne
+    Etant donné une personne salarie avec un domicile en GE et sans travail en France est ajouté au referentiel personne
+    Etant donné que l´utilisateur transmet sa LR
+    Etant donné que la date du jour est 01.02.2026
+    Quand l´utilisateur crée une nouvelle LR 2026 pour ce DPI
+    Alors le système DepotLR reprend les données de la LR transmise avec <nombre personne> employé(s) domicilié(s) en <domicile> sans données de travail en France
+    Exemples:
+      | Test | domicile | nombre personne | Observation                                             |
+      | 1    | FR       | 2               | 2 personnes domicilées en France sans travail en France |
+      | 2    | GE       | 1               | 1 personne domicilée en Suisse sans travail en France   |
+
+  Scénario: Creation LR à partir Année-1 : Les données travail en France sont réinitialisées pour les salariés domiciliés en France pour un salarié sans pérode de fin
+    Etant donné un DPI SALARIES
+    Etant donné que la date du jour est 30.11.2025
+    Etant donné qu'il existe une LR Brouillon en 2025 pour ce DPI
+    Etant donné une personne salarie avec une période d'activité du 01.01.2025 au  avec un domicile en FR et sans travail en France est ajouté au referentiel personne
+    Etant donné une personne salarie avec un domicile en FR et sans travail en France est ajouté au referentiel personne
+    Etant donné une personne salarie avec un domicile en GE et sans travail en France est ajouté au referentiel personne
+    Etant donné que l´utilisateur transmet sa LR
+    Etant donné que la date du jour est 01.02.2026
+    Quand l´utilisateur crée une nouvelle LR 2026 pour ce DPI
+    Alors le système DepotLR reprend les données de la LR transmise avec <nombre personne> employé(s) domicilié(s) en <domicile> sans données de travail en France
+    Exemples:
+      | Test | domicile | nombre personne | Observation                                             |
+      | 1    | FR       | 2               | 2 personnes domicilées en France sans travail en France |
+      | 2    | GE       | 1               | 1 personne domicilé en Suisse sans travail en France    |
+
+  Scénario: Creation LR à partir Année-1 : Pas de données travail en France pour les DPI hors salarié
+    Etant donné un DPI CAISSE_COMPENSATION
+    Etant donné que la date du jour est 30.12.2025
+    Etant donné qu'il existe une LR Brouillon en 2025 pour ce DPI
+    Etant donné qu'une personne CAISSE_COMPENSATION a été ajoutée à cette LR avec un domicile en FR
+    Etant donné qu'une personne CAISSE_COMPENSATION a été ajoutée à cette LR avec un domicile en FR
+    Etant donné qu'une personne CAISSE_COMPENSATION a été ajoutée à cette LR avec un domicile en GE
+    Etant donné que l´utilisateur transmet sa LR
+    Etant donné que la date du jour est 01.02.2026
+    Quand l´utilisateur crée une nouvelle LR 2026 pour ce DPI
+    Alors le système DepotLR reprend les données de la LR transmise avec <nombre personne> employé(s) domicilié(s) en <domicile> sans données de travail en France
+    Exemples:
+      | Test | domicile | nombre personne | Observation                                             |
+      | 1    | FR       | 2               | 2 personnes domicilées en France sans travail en France |
+      | 2    | GE       | 1               | 1 personne domicilée en Suisse sans travail en France   |
