@@ -57,6 +57,9 @@ build-and-publish-docker-image:
     - buildah push ${FULL_IMAGE_NAME}
     - cd -
     - buildah logout "${PUBLISH_REGISTRY}"
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: on_success
 
 restart-openshift-deployment:
   stage: deploy
@@ -69,3 +72,6 @@ restart-openshift-deployment:
   script:
     - oc login --insecure-skip-tls-verify --token=$OPENSHIFT_PROJECT_TOKEN --server=https://api.soca.lbdev.etat-ge.ch:6443
     - oc rollout restart deployment/deployment-rapports-bdd
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: on_success
