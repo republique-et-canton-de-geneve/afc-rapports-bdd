@@ -9,7 +9,7 @@ L'objectif est d'exposer au métier une table des matières qui aggrège les lie
 actuels.
 
 Ce projet est déployé à l'adresse suivante :
-[Rapports BDD](https://rapports-bdd-app-11422-afcoutils-dev-01.apps.soca.lbdev.etat-ge.ch/).
+[Rapports BDD](https://afcrapportsbdd.apps.soca.lbdev.etat-ge.ch/).
 
 ## Environnement
 

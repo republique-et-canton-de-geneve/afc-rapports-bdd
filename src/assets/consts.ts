@@ -1,23 +1,23 @@
 import type CucumberReportProject from '@/models/cucumber-report-project'
 import { FEATURE_SLUGS } from '@/generated/featureFiles'
+const IGNORED_SLUG = ['urbafc-backend-template']
+const CATEGORIE_PAR_DEFAUT = 'AFC'
 
 const TRANSLATIONS: CucumberReportProject[] = [
-  { name: 'Assuj IPP', slug: 'assuj-ipp' },
-  { name: 'Contrôle barème', slug: 'controle-bareme-lr-backend' },
-  { name: 'Depot LR', slug: 'depotlr-backend' },
-  { name: 'Gestion IBAN', slug: 'gestiban-backend' },
-  { name: 'Prod impot PP', slug: 'prodimpotpp-backend' },
-  { name: 'RVI', slug: 'rvi-backend' },
-  { name: 'Tax Immo', slug: 'tax-immo-backend' },
-  { name: 'Changement periode assuj', slug: 'form-chgt-assuj-backend' },
-  { name: 'Mes documents', slug: 'mesdocuments-backend' },
-  { name: 'Mes comptes', slug: 'mescomptes-backend' },
-  { name: 'Page d\'accueil', slug: 'pageaccueil-backend' },
-  { name: 'RabbitMQ Admin', slug: 'rabbitmq-admin-backend' },
-  { name: 'Texte dynamique', slug: 'texte-dynamique-backend' },
+  { name: 'Mes documents', slug: 'mesdocuments-backend', categorie: 'Référentiel' },
+  { name: 'Page d\'accueil', slug: 'pageaccueil-backend', categorie: 'Référentiel' },
+  { name: 'RVI', slug: 'rvi-backend', categorie: 'Référentiel' },
+  { name: 'Assuj IPP', slug: 'assuj-ipp', categorie: 'Référentiel/Assuj' },
+  { name: 'Changement periode assuj', slug: 'form-chgt-assuj-backend', categorie: 'Référentiel/Assuj' },
+  { name: 'Mes comptes', slug: 'mescomptes-backend', categorie: 'Perception' },
+  { name: 'Contrôle barème', slug: 'controle-bareme-lr-backend', categorie: 'Perception/IS' },
+  { name: 'Depot LR', slug: 'depotlr-backend', categorie: 'Perception/IS' },
+  { name: 'Gestion IBAN', slug: 'gestiban-backend', categorie: 'Perception' },
+  { name: 'Prod impot PP', slug: 'prodimpotpp-backend', categorie: 'Taxation' },
+  { name: 'Tax Immo', slug: 'tax-immo-backend', categorie: 'Taxation' },
+  { name: 'RabbitMQ Admin', slug: 'rabbitmq-admin-backend', categorie: 'Taxation'},
+  { name: 'Texte dynamique', slug: 'texte-dynamique-backend', categorie: 'Référentiel' },
 ]
-
-const IGNORED_SLUG = ['urbafc-backend-template']
 
 const CUCUMBER_REPORTS: CucumberReportProject[] = FEATURE_SLUGS
   .filter((slug) => !IGNORED_SLUG.includes(slug))
@@ -26,7 +26,7 @@ const CUCUMBER_REPORTS: CucumberReportProject[] = FEATURE_SLUGS
     if (translation) {
       return translation
     } else {
-      return { name: slug, slug }
+      return { name: slug, slug, categorie: CATEGORIE_PAR_DEFAUT }
     }
   })
   .sort((a, b) => a.name.localeCompare(b.name))
