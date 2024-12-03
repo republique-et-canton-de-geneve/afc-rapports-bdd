@@ -17,6 +17,7 @@ const TRANSLATIONS: CucumberReportProject[] = [
   { name: 'Tax Immo', slug: 'tax-immo-backend', categorie: 'Taxation' },
   { name: 'RabbitMQ Admin', slug: 'rabbitmq-admin-backend', categorie: 'Taxation'},
   { name: 'Texte dynamique', slug: 'texte-dynamique-backend', categorie: 'Référentiel' },
+  { name: 'E-démarches Autorisations', slug: 'edmautorisations-backend', categorie: 'Plateforme' },
 ]
 
 const CUCUMBER_REPORTS: CucumberReportProject[] = FEATURE_SLUGS
