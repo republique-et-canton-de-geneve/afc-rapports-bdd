@@ -1,5 +1,5 @@
 #language: fr
-Fonctionnalité: F11 - Détermination du nom du fichier pdf relevé de compte
+Fonctionnalité: F10 - Détermination du nom du fichier pdf relevé de compte
 
   Règle: R1 - le fichier pdf de relevé de compte doit être nommé "ReleveDeCompte - AAAAMMJJ-HHMM"
    - AAAAMMJJ-HHMM étant implémenté avec la date et l'heure courante

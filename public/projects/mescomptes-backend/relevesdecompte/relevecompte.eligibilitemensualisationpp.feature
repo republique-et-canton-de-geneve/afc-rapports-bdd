@@ -1,5 +1,5 @@
 #language: fr
-Fonctionnalité: F7 - Détermination de l'éligibilité d'un compte à la mensualisation PP
+Fonctionnalité: F6 - Détermination de l'éligibilité d'un compte à la mensualisation PP
 
   Règle: R1 - Un compte est éligible à la mensualisation  PP :
   - si le compte appartient à une PP

@@ -1,5 +1,5 @@
 #language: fr
-Fonctionnalité: F8 - Détermination du libellé pour un compte éligible à la mensu PP
+Fonctionnalité: F7 - Détermination du libellé pour un compte éligible à la mensu PP
 
   Règle: R1 - Le libellé est :
   - si le compte est éligible à la mensu PP :  "Voir les courriers relatifs à votre mensualisation <<Accès aux docs liés à la MENSU et Modification d'acomptes>>"

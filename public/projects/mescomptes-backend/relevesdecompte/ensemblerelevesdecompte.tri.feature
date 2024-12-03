@@ -1,5 +1,5 @@
 #language: fr
-Fonctionnalité: F10 - Vérification du tri des comptes
+Fonctionnalité: F9 - Vérification du tri des comptes
 
   Règle: R1 - La liste des comptes doivent être triées selon les règles ci-dessous :
   - Chaque compte est associé à un type de prestation (ou impôt) (Ex : ICC, IFD, QDMTT, ...)
