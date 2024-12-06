@@ -31,6 +31,8 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
+Tested with latest node version this day (06 dec 2024): 23.3.0
+
 ```sh
 npm install
 ```
