@@ -1,0 +1,18 @@
+:root {
+  --primary: #eff0f0;
+  --secondary: #173647;
+  --accent: #1dbb68;
+}
+
+#app,
+body,
+html {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.p-tree-node-toggle-button {
+  align-self: start;
+}
