@@ -2,7 +2,7 @@ default:
   image:
     name: "$CI_DOCKER_IMAGE"
   tags:
-    - 'for:scheduled-jobs'
+    - docker
 stages:
   - github_vers_gitlab
 
