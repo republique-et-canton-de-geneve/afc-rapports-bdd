@@ -40,6 +40,8 @@ synchro_github_vers_gitlab:
     - git remote -v
     - git branch
     - git switch main
+    - git config --global user.email "$EMAIL_GIT"
+    - git config --global user.name "$USER_TECHNIQUE_GIT"
     # 2) pull GitHub -> local
     - git remote add github https://$GITHUB_TOKEN@github.com/republique-et-canton-de-geneve/afc-rapports-bdd.git
     - echo PROXY_URL=$PROXY_URL
