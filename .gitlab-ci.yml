@@ -30,7 +30,7 @@ stages:
 # - À faire ensuite :
 #   Le job peut être lancé manuellement, mais le mieux est de le planifier. Pour cela :
 #   dans le projet GitLab > Build > Pipeline schedules > New schedule > choisir un Interval
-#   Pattern > Save pipeline schedule.
+#   Pattern > Save pipeline schedule
 #
 synchro_github_vers_gitlab:
   stage: github_vers_gitlab
