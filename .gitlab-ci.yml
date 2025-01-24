@@ -1,0 +1,52 @@
+default:
+  image:
+    name: "$CI_DOCKER_IMAGE"
+  tags:
+    - 'for:scheduled-jobs'
+stages:
+  - github_vers_gitlab
+
+# Attention : dans Settings > CI/CD > General pipelines > Git strategy, choisir
+# "git clone" et non "git fetch", pour éviter tout effet de cache de la
+# configuration (le remote notamment)
+#
+# - Préalable 1 : dans Settings > CI/CD > Variables, créer une variable GITHUB_TOKEN
+#   contenant un jeton d'accès sur GitHub.
+#   Pour obtenir ce jeton, aller dans GitHub, cliquer sur son avatar > Settings > Developer
+#   settings > Personal access tokens > Tokens (classic) > Generate new token > classic,
+#   puis cocher "repo" et "workflow", puis cliquer sur "Generate token".
+#   (remarque : créer un jeton de type "Fine-grained tokens (beta)" et limité à un seul dépôt
+#   Git ne fonctionne pas, car GitHub ne propose pas les dépôts de République et canton de
+#   Gèneve - uniquement les dépôts personnels de l'utilisateur)
+#
+# - Préalable 2 (sinon erreur 403 au git push sur GitLab) : dans projet > Settings > CI/CD > Variables,
+#   créer une variable GITLAB_TOKEN contenant un jeton GitLab limité au projet.
+#   Pour obtenir un tel jeton, dans GitLab cliquer sur : projet > Settings > Access Tokens >
+#   puis créer un jeton (token) avec le rôle Maintainer et les scopes read_repository et
+#   write_repository.
+#
+# - À faire ensuite :
+#   Le job peut être lancé manuellement, mais le mieux est de le planifier. Pour cela :
+#   dans le projet GitLab > Build > Pipeline schedules > New schedule > choisir un Interval
+#   Pattern > Save pipeline schedule.
+#
+synchro_github_vers_gitlab:
+  stage: github_vers_gitlab
+  script:
+    # 1) configuration du dépôt local
+    - ls -a
+    - git remote -v
+    - git branch
+    - git switch main
+    # 2) pull GitHub -> local
+    - git remote add github https://$GITHUB_TOKEN@github.com/republique-et-canton-de-geneve/afc-rapports-bdd.git
+    - echo PROXY_URL=$PROXY_URL
+    - git config http.proxy $PROXY_URL
+    - git config http.sslVerify false
+    - git pull github main
+    # 3) push local -> GitLab (inclut le changement de jeton GitLab, cf. plus haut)
+    - URL_REMOTE_GITLAB="https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/gitlab/${CI_PROJECT_PATH}.git"
+    - git remote set-url origin $URL_REMOTE_GITLAB
+    - git remote -v
+    - git push origin main
+  when: manual
