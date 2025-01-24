@@ -45,7 +45,7 @@ synchro_github_vers_gitlab:
     - git config http.sslVerify false
     - git pull github main
     # 3) push local -> GitLab (inclut le changement de jeton GitLab, cf. plus haut)
-    - URL_REMOTE_GITLAB="https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/gitlab/${CI_PROJECT_PATH}.git"
+    - URL_REMOTE_GITLAB="https://gitlab-ci-token:${USER_TECHNIQUE_GIT_TOKEN}@${CI_SERVER_HOST}/gitlab/${CI_PROJECT_PATH}.git"
     - git remote set-url origin $URL_REMOTE_GITLAB
     - git remote -v
     - git push origin main
