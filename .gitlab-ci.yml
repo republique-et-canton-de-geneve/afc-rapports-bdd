@@ -39,6 +39,7 @@ synchro_github_vers_gitlab:
     - git branch
     - git switch main
     # 2) pull GitHub -> local
+    - git remote remove github || true
     - git remote add github https://$GITHUB_TOKEN@github.com/republique-et-canton-de-geneve/afc-rapports-bdd.git
     - echo PROXY_URL=$PROXY_URL
     - git config http.proxy $PROXY_URL
