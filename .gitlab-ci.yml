@@ -1,10 +1,10 @@
+variables:
+  GIT_STRATEGY: clone
 default:
   image:
     name: "$CI_DOCKER_IMAGE"
   tags:
     - docker
-  variables:
-    GIT_STRATEGY: clone
 stages:
   - github_vers_gitlab
 
