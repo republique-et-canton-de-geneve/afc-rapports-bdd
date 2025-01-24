@@ -3,6 +3,8 @@ default:
     name: "$CI_DOCKER_IMAGE"
   tags:
     - docker
+  variables:
+    GIT_STRATEGY: clone
 stages:
   - github_vers_gitlab
 
@@ -39,17 +41,14 @@ synchro_github_vers_gitlab:
     - git branch
     - git switch main
     # 2) pull GitHub -> local
-    - git remote remove github || true
     - git remote add github https://$GITHUB_TOKEN@github.com/republique-et-canton-de-geneve/afc-rapports-bdd.git
     - echo PROXY_URL=$PROXY_URL
     - git config http.proxy $PROXY_URL
-    - git config pull.rebase false
     - git config http.sslVerify false
     - git pull github main
     # 3) push local -> GitLab (inclut le changement de jeton GitLab, cf. plus haut)
     - URL_REMOTE_GITLAB="https://gitlab-ci-token:${USER_TECHNIQUE_GIT_TOKEN}@${CI_SERVER_HOST}/gitlab/${CI_PROJECT_PATH}.git"
     - git remote set-url origin $URL_REMOTE_GITLAB
     - git remote -v
-    - git pull origin main || true
     - git push origin main
   when: manual
