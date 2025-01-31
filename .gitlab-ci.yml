@@ -53,5 +53,5 @@ synchro_github_vers_gitlab:
     - URL_REMOTE_GITLAB="https://gitlab-ci-token:${USER_TECHNIQUE_GIT_TOKEN}@${CI_SERVER_HOST}/gitlab/${CI_PROJECT_PATH}.git"
     - git remote set-url origin $URL_REMOTE_GITLAB
     - git remote -v
-    - git push origin main
+    - git push origin OPENSRC-289
   when: manual
