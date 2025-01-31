@@ -39,7 +39,7 @@ synchro_github_vers_gitlab:
     - ls -a
     - git remote -v
     - git branch
-    - git switch main
+    - git switch OPENSRC-289
  #   - git config --global user.email "$EMAIL_GIT"
  #   - git config --global user.name "$USER_TECHNIQUE_GIT"
     # 2) pull GitHub -> local
