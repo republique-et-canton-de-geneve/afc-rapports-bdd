@@ -2,7 +2,7 @@
   <div class="step" v-for="step in steps">
 
     <div class="title">
-    <b>{{ step.keyword }}: </b> {{ step.text }}
+    <b>{{ step.keyword }}</b> {{ step.text }}
     </div>
     <table v-if="step.dataTable">
       <tbody>
