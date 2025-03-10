@@ -51,9 +51,13 @@ tr {
 
 td, th {
   padding: .4em .6em;
-  border-width: 0 2px;
+  border-width: 0 2px 0 0;
   border-style: solid;
   border-color: #000080;
   color: #297bde;
+}
+
+td:first-child, th:first-child {
+  border-width: 0 2px;
 }
 </style>
