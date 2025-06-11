@@ -23,7 +23,9 @@ jobs:
         with:
           node-version: 20
       - run: npm install
-      - run: npm run build -- --base=/afc-rapports-bdd/
+      - run: npm run build
+        env:
+          BASE_PATH: /afc-rapports-bdd/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
