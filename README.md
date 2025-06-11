@@ -54,3 +54,7 @@ npm run dev
 ```sh
 npm run lint
 ```
+## Déploiement sur GitHub Pages
+
+Un workflow GitHub Actions (`.github/workflows/pages.yml`) construit automatiquement l'application et la publie sur GitHub Pages à chaque push sur `main`.
+Activez GitHub Pages dans les paramètres du dépôt pour rendre l'application accessible à l'URL fournie par l'action.
