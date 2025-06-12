@@ -6,6 +6,9 @@ import fs from 'fs'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
+const BASE_PATH = process.env.BASE_PATH || '/'
+const basePrefix = BASE_PATH === '/' ? '' : BASE_PATH.replace(/\/$/, '')
+
 // Fonction pour parcourir les fichiers .feature
 function findFeatureFiles(dir, baseDir) {
   let results = []
@@ -20,7 +23,8 @@ function findFeatureFiles(dir, baseDir) {
     } else if (filePath.endsWith('.feature')) {
       // Générer un chemin relatif basé sur `baseDir`
       const relativePath = '/' + path.relative(baseDir, filePath).replace(/\\/g, '/')
-      results.push(relativePath)
+      const fullPath = basePrefix + relativePath
+      results.push(fullPath)
     }
   })
 
@@ -30,7 +34,9 @@ function findFeatureFiles(dir, baseDir) {
 function findFeatureSlugs(featureFiles) {
   return [...new Set(
     featureFiles.map((featureFile) => {
-      const match = featureFile.match(/^\/projects\/([^/]+)/)
+      const prefixPattern = basePrefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(`^${prefixPattern}\/projects\/([^/]+)`)
+      const match = featureFile.match(regex)
       return match ? match[1] : null
     }).filter(slug => slug !== null)
   )]
