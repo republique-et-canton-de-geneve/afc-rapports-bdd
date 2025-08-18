@@ -1,6 +1,6 @@
 {
   "name": "rapports-bdd",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "bin": {
     "rapports-bdd": "./bin/rapports-bdd.js"
@@ -10,6 +10,8 @@
     "public",
     "scripts",
     "src",
+    "index.html",
+    "404.html",
     "vite.config.ts",
     "tsconfig.json",
     "tsconfig.app.json",
