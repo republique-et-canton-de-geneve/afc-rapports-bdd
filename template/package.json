@@ -8,7 +8,7 @@
     "preview": "vite preview --outDir dist"
   },
   "devDependencies": {
-    "rapports-bdd": "^1.0.4",
+    "rapports-bdd": "^1.0.5",
     "vite": "^5.3.1"
   }
 }
