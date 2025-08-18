@@ -30,6 +30,10 @@ L'option `--features` indique le dossier contenant les fichiers BDD, tandis que 
    npm run build
    ```
    Les rapports seront disponibles dans le dossier `dist/`.
+6. Prévisualisez-les dans un navigateur :
+   ```sh
+   npm run preview
+   ```
 
 ## Architecture
 
