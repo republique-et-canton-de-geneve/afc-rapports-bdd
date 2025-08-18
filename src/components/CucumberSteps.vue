@@ -1,13 +1,13 @@
 <template>
-  <div class="step" v-for="step in steps">
+  <div class="step" v-for="step in steps" :key="step.id">
 
     <div class="title">
     <b>{{ step.keyword }}</b> {{ step.text }}
     </div>
     <table v-if="step.dataTable">
       <tbody>
-      <tr v-for="row in step.dataTable.rows">
-        <td v-for="cell in row.cells">
+      <tr v-for="(row, rowIndex) in step.dataTable.rows" :key="row.id ?? rowIndex">
+        <td v-for="(cell, cellIndex) in row.cells" :key="cell.value ?? cellIndex">
           {{cell.value}}
         </td>
       </tr>
