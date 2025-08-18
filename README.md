@@ -87,4 +87,4 @@ Activez GitHub Pages dans les paramètres du dépôt pour rendre l'application a
 
 ## Publication sur npm
 
-Un workflow GitHub Actions (`.github/workflows/release.yml`) vérifie la construction du paquet à chaque push et permet une publication manuelle sur npm via l'évènement `workflow_dispatch`. Assurez-vous de définir le secret `NPM_TOKEN` pour autoriser `npm publish`.
+Un workflow GitHub Actions (`.github/workflows/release.yml`) exécute `npm run lint` et s'assure que la construction du paquet réussit à chaque push. Il permet également une publication manuelle sur npm via l'évènement `workflow_dispatch`. Assurez-vous de définir le secret `NPM_TOKEN` pour autoriser `npm publish`.
