@@ -1,8 +1,18 @@
 {
   "name": "rapports-bdd",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
+  "bin": {
+    "rapports-bdd": "./bin/rapports-bdd.js"
+  },
+  "files": [
+    "bin",
+    "public",
+    "scripts",
+    "src",
+    "vite.config.ts"
+  ],
+  "license": "CC-BY-4.0",
   "scripts": {
     "dev": "vite",
     "build": "run-s generate type-check \"build-only {@}\" -- && cp dist/index.html dist/404.html",

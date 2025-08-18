@@ -1,5 +1,5 @@
 <template>
-  <div class="example" v-for="example in examples">
+  <div class="example" v-for="example in examples" :key="example.id">
 
     <div class="title">
       <b>{{ example.keyword }}: </b> {{ example.name }}

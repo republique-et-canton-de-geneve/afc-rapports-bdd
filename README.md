@@ -5,6 +5,36 @@
 L'objectif est d'exposer au métier une table des matières qui aggrège les liens l'ensemble des rapports de tests BDD
 actuels.
 
+## Utilisation comme dépendance npm
+
+Installez le paquet puis générez les rapports à partir de vos fichiers `.feature` :
+
+```sh
+npm install rapports-bdd --save-dev
+npx rapports-bdd --features ./chemin/vers/mes/features --out ./dist
+```
+
+L'option `--features` indique le dossier contenant les fichiers BDD, tandis que `--out` définit le dossier de sortie. Une option `--base` permet d'ajuster le chemin de base si nécessaire.
+
+## Guide pas à pas
+
+1. Copiez le dossier `template` de ce dépôt et renommez-le selon votre projet.
+2. Dans ce nouveau dossier, éditez `package.json` pour adapter le champ `name`.
+3. Ajoutez vos fichiers `.feature` dans le dossier `features/`.
+4. Installez les dépendances :
+   ```sh
+   npm install
+   ```
+5. Générez les rapports :
+   ```sh
+   npm run build
+   ```
+   Les rapports seront disponibles dans le dossier `dist/`.
+6. Prévisualisez-les dans un navigateur :
+   ```sh
+   npm run preview
+   ```
+
 ## Architecture
 
 ### Table des matières
@@ -58,3 +88,7 @@ npm run lint
 
 Un workflow GitHub Actions (`.github/workflows/pages.yml`) construit automatiquement l'application et la publie sur GitHub Pages à chaque push sur `main`.
 Activez GitHub Pages dans les paramètres du dépôt pour rendre l'application accessible à l'URL fournie par l'action.
+
+## Publication sur npm
+
+Un workflow GitHub Actions (`.github/workflows/release.yml`) exécute `npm run lint` et s'assure que la construction du paquet réussit à chaque push. Il permet également une publication manuelle sur npm via l'évènement `workflow_dispatch`. Assurez-vous de définir le secret `NPM_TOKEN` pour autoriser `npm publish`.

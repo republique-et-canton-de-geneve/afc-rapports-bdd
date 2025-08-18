@@ -11,5 +11,11 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
+  },
+  rules: {
+    'vue/multi-word-component-names': ['error', {
+      ignores: ['Fieldset', 'Tree', 'Tag', 'Breadcrumb', 'PanelMenu']
+    }],
+    'vue/no-reserved-component-names': 'off'
   }
 }

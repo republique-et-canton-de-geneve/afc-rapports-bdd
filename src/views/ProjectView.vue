@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CUCUMBER_REPORTS } from '@/assets/consts'
 import { useRoute, useRouter } from 'vue-router'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import type { TreeNode } from 'primevue/treenode'
 
 import * as Gherkin from '@cucumber/gherkin'
