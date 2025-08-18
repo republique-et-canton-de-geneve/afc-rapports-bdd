@@ -1,0 +1,12 @@
+{
+  "name": "my-rapports-bdd-project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rapports-bdd --features features --out dist"
+  },
+  "devDependencies": {
+    "rapports-bdd": "^1.0.0"
+  }
+}
