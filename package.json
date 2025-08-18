@@ -1,6 +1,6 @@
 {
   "name": "rapports-bdd",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "bin": {
     "rapports-bdd": "./bin/rapports-bdd.js"
@@ -18,7 +18,7 @@
   "license": "CC-BY-4.0",
   "scripts": {
     "dev": "vite",
-    "build": "run-s generate type-check \"build-only {@}\" -- && cp dist/index.html dist/404.html",
+    "build": "run-s generate type-check \"build-only {@}\" -- && node scripts/postBuildCopy404.js",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",

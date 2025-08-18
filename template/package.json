@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "rapports-bdd --features features --out dist",
-    "preview": "vite preview dist"
+    "preview": "vite preview --outDir dist"
   },
   "devDependencies": {
     "rapports-bdd": "^1.0.0",

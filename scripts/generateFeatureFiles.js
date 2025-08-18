@@ -14,6 +14,11 @@ const basePrefix = BASE_PATH === '/' ? '' : BASE_PATH.replace(/\/$/, '')
 function findFeatureFiles(dir, baseDir) {
   let results = []
 
+  // Si le dossier n'existe pas, retourner une liste vide
+  if (!fs.existsSync(dir)) {
+    return results
+  }
+
   fs.readdirSync(dir).forEach((file) => {
     const filePath = path.join(dir, file)
     const stat = fs.statSync(filePath)
