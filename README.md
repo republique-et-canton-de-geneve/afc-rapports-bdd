@@ -92,3 +92,31 @@ Activez GitHub Pages dans les paramètres du dépôt pour rendre l'application a
 ## Publication sur npm
 
 Un workflow GitHub Actions (`.github/workflows/release.yml`) exécute `npm run lint` et s'assure que la construction du paquet réussit à chaque push. Il permet également une publication manuelle sur npm via l'évènement `workflow_dispatch`. Assurez-vous de définir le secret `NPM_TOKEN` pour autoriser `npm publish`.
+
+
+
+## Configuration utilisateur pour le template (rapports-bdd.config.json)
+Vous pouvez personnaliser les noms, catégories et exclusions de projets lorsque vous utilisez le template sans modifier le code source du paquet.
+
+Placez un fichier `rapports-bdd.config.json` à la racine du répertoire passé à `--features` (par exemple `features/`). Le build lit ce fichier et génère automatiquement `src/generated/userConfig.ts` utilisé par l’interface.
+
+Champs supportés:
+- `translations`: liste d’objets { slug, name, categorie } qui remplace la traduction intégrée pour ces slugs.
+- `defaultCategory`: chaîne utilisée quand un slug n’a pas de traduction. Par défaut: "Orphelins".
+- `ignoredSlugs`: liste de slugs à masquer (en plus des ignorés intégrés).
+
+Exemple minimal:
+```json
+{
+  "translations": [
+    { "slug": "mon-backend", "name": "Mon Backend", "categorie": "01-R-AFC/Mon Domaine" },
+    { "slug": "autre-projet", "name": "Autre Projet", "categorie": "10-R-TaxPP" }
+  ],
+  "defaultCategory": "Divers",
+  "ignoredSlugs": ["exemple-a-ignorer"]
+}
+```
+
+Notes:
+- Si vous fournissez un simple dossier de features via `--features features`, le slug sera inféré automatiquement depuis le nom du dossier (`features` → slug `features`). Vous pouvez renommer ce dossier pour contrôler le slug ou utiliser une structure `projects/<slug>/...` où chaque sous-dossier `projects/<slug>` est un projet.
+- En prévisualisation (`npm run preview` dans le template), les fichiers `.feature` sont exposés sous `/projects/<slug>/...` même si votre `--features` n’a pas de sous-dossier `projects`.

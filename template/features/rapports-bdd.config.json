@@ -1,0 +1,7 @@
+{
+  "translations": [
+    { "slug": "example", "name": "Example", "categorie": "Categorie/Domaine" }
+  ],
+  "defaultCategory": "Divers",
+  "ignoredSlugs": ["exemple-a-ignorer"]
+}
