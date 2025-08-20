@@ -1,7 +1,8 @@
 {
   "translations": [
-    { "slug": "example", "name": "Example", "categorie": "Categorie/Domaine" }
+    { "slug": "demo-backend", "name": "Démo Backend", "categorie": "01-R-AFC/Exemples" },
+    { "slug": "finance-backend", "name": "Finance Backend", "categorie": "10-R-TaxPP" }
   ],
   "defaultCategory": "Divers",
-  "ignoredSlugs": ["exemple-a-ignorer"]
+  "ignoredSlugs": ["ignored-sample"]
 }
