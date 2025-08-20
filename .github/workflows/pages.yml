@@ -15,26 +15,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-template:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build
-        env:
-          BASE_PATH: /afc-rapports-bdd/
-      - uses: actions/upload-pages-artifact@v3
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps (library)
+        run: npm ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Pack library
+        id: pack
+        run: |
+          PKG=$(npm pack --silent)
+          echo "pkg=$PKG" >> $GITHUB_OUTPUT
+
+      - name: Install deps (template)
+        working-directory: template
+        run: npm install
+
+      - name: Install packed library into template
+        working-directory: template
+        run: npm i -D ../${{ steps.pack.outputs.pkg }}
+
+      - name: Build template
+        working-directory: template
+        run: npm run build -- --base "/${{ github.event.repository.name }}/"
+
+      - name: Upload Pages artifact (template/dist)
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: template/dist
+
   deploy:
-    needs: build
+    needs: build-template
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4

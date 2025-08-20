@@ -1,8 +1,7 @@
 {
   "translations": [
-    { "slug": "demo-backend", "name": "Démo Backend", "categorie": "01-R-AFC/Exemples" },
-    { "slug": "finance-backend", "name": "Finance Backend", "categorie": "10-R-TaxPP" }
+    { "slug": "prodimpotpp-backend", "name": "Prod impot PP", "categorie": "10-R-TaxPP" }
   ],
-  "defaultCategory": "Divers",
-  "ignoredSlugs": ["ignored-sample"]
+  "defaultCategory": "Orphelins",
+  "ignoredSlugs": []
 }

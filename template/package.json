@@ -7,8 +7,11 @@
     "build": "rapports-bdd --features features --out dist",
     "preview": "vite preview --outDir dist"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
-    "rapports-bdd": "^1.0.9",
+    "rapports-bdd": "^1.0.10",
     "vite": "^5.3.1"
   }
 }
