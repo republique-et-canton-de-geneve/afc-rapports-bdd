@@ -11,7 +11,7 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "rapports-bdd": "^1.0.10",
+    "rapports-bdd": "^1.0.11",
     "vite": "^5.3.1"
   }
 }

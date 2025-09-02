@@ -12,7 +12,7 @@ import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
 
 const BASE_URL = import.meta.env.BASE_URL
-const BASE_PROJECT_PATH = `${BASE_URL}projets/`
+const BASE_PROJECT_PATH = '/projets/'
 const BASE_PROJECTS_DIR = `${BASE_URL}projects/`
 const SLASH = "/";
 const FEATURE_SEPARATOR = ":";
