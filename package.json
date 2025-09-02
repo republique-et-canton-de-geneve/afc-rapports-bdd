@@ -1,6 +1,6 @@
 {
   "name": "rapports-bdd",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
   "bin": {
     "rapports-bdd": "./bin/rapports-bdd.js"
