@@ -1,12 +1,12 @@
 # Rapports BDD – Template (projet client)
 
 Ce dossier est un exemple prêt à l’emploi pour publier une webapp Rapports BDD à partir de vos fichiers `.feature`.
-Il consomme la librairie `rapports-bdd` via son CLI – sans mélanger avec les scripts de développement de la librairie elle‑même.
+Il consomme la librairie `@state-of-geneva/rapports-bdd` via son CLI – sans mélanger avec les scripts de développement de la librairie elle‑même.
 
 Important: ce dossier `template/` n’est pas inclus dans le paquet publié sur npm. Il fait partie du dépôt GitHub. Copiez‑le depuis le repo si vous voulez démarrer rapidement.
 
 ## Liens utiles
-- Paquet npm: https://www.npmjs.com/package/rapports-bdd
+- Paquet npm: https://www.npmjs.com/package/@state-of-geneva/rapports-bdd
 - Dépôt GitHub: https://github.com/republique-et-canton-de-geneve/afc-rapports-bdd
 - Démo (GitHub Pages): https://republique-et-canton-de-geneve.github.io/afc-rapports-bdd/
 

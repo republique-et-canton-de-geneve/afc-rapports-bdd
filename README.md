@@ -10,14 +10,14 @@ Générez un site statique à partir de vos features.
 
 Sans installation préalable (recommandé pour un essai rapide):
 ```sh
-npx rapports-bdd@latest --features ./features --out ./dist
+npx @state-of-geneva/rapports-bdd@latest --features ./features --out ./dist
 # Optionnel si vous hébergez sous un sous-chemin
-npx rapports-bdd@latest --features ./features --out ./dist --base /mon-sous-chemin/
+npx @state-of-geneva/rapports-bdd@latest --features ./features --out ./dist --base /mon-sous-chemin/
 ```
 
 Ou en tant que dépendance de dev:
 ```sh
-npm i -D rapports-bdd
+npm i -D @state-of-geneva/rapports-bdd
 npx rapports-bdd --features ./features --out ./dist
 ```
 
