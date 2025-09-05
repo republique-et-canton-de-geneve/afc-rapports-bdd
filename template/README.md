@@ -16,6 +16,8 @@ Important: ce dossier `template/` n’est pas inclus dans le paquet publié sur 
 ## Démarrage rapide
 1) Copier ce dossier `template/` hors du dépôt si besoin et renommer le répertoire selon votre projet.
 2) Dans `template/package.json`, adaptez le champ `name` (facultatif).
+   La dépendance `@state-of-geneva/rapports-bdd` pointe par défaut vers la racine du dépôt (`file:..`) pour les builds CI;
+   remplacez-la par une version publiée sur npm lorsque vous copiez ce dossier hors du repo.
 3) Placez vos fichiers `.feature` sous `template/features/` (voir Structures ci‑dessous).
 4) Depuis le dossier `template/` :
    - Installation: `npm install`
