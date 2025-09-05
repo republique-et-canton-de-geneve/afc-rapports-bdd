@@ -11,7 +11,7 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "@state-of-geneva/rapports-bdd": "^1.0.12",
+    "@state-of-geneva/rapports-bdd": "file:..",
     "vite": "^5.3.1"
   }
 }
