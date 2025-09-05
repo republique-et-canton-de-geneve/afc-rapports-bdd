@@ -3,7 +3,7 @@
   "version": "1.0.11",
   "type": "module",
   "bin": {
-    "rapports-bdd": "./bin/rapports-bdd.js"
+    "rapports-bdd": "bin/rapports-bdd.js"
   },
   "files": [
     "bin",
