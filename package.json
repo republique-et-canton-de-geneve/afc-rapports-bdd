@@ -1,5 +1,5 @@
 {
-  "name": "rapports-bdd",
+  "name": "@state-of-geneva/rapports-bdd",
   "version": "1.0.11",
   "type": "module",
   "bin": {
@@ -18,6 +18,9 @@
   ],
   "license": "CC-BY-4.0",
   "description": "CLI + Vue app to render Gherkin .feature files as browsable reports (library only, no features inside)",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   },

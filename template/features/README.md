@@ -1,6 +1,6 @@
 # Exemples d'organisation des fichiers .feature
 
-Ce dossier montre deux façons supportées d'organiser vos fichiers `.feature` avec `rapports-bdd`.
+Ce dossier montre deux façons supportées d'organiser vos fichiers `.feature` avec `@state-of-geneva/rapports-bdd`.
 
 ## 1) Mode multi‑projets (recommandé)
 
