@@ -1,6 +1,6 @@
 {
   "name": "@state-of-geneva/rapports-bdd",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "type": "module",
   "bin": {
     "rapports-bdd": "bin/rapports-bdd.js"
