@@ -4,8 +4,10 @@
     <div class="title">
     <b>{{ step.keyword }}</b> {{ step.text }}
     </div>
+    <pre v-if="step?.docString?.content">{{step?.docString?.content}}</pre>
     <table v-if="step.dataTable">
       <tbody>
+
       <tr v-for="(row, rowIndex) in step.dataTable.rows" :key="row.id ?? rowIndex">
         <td v-for="(cell, cellIndex) in row.cells" :key="cell.value ?? cellIndex">
           {{cell.value}}

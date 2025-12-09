@@ -1,0 +1,9 @@
+{
+  "translations": [
+    { "slug": "prodimpotpp-backend", "name": "Prod impot PP", "categorie": "10-R-TaxPP" },
+    { "slug": "rvi-backend", "name": "RVI", "categorie": "01-RVI" },
+    { "slug": "test", "name": "Hello world", "categorie": "00-Hello world" }
+  ],
+  "defaultCategory": "Orphelins",
+  "ignoredSlugs": []
+}
