@@ -16,6 +16,7 @@ import {
   NODE_TYPE_FEATURE,
   NODE_TYPE_RULE, NODE_TYPE_SCENARIO
 } from '@/service/treenode-service'
+import type FeatureTreeNodeData from '@/models/feature-tree-node-data'
 
 const BASE_URL = import.meta.env.BASE_URL
 const BASE_PROJECT_PATH = '/projets/'
@@ -63,7 +64,7 @@ const loadFeatures = async (paths: string[], baseDir: string) => {
   const promises = paths.map(async (featureFilePath) => {
     const body = await fetch(featureFilePath)
     const featureFileContent = await body.text()
-    const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+    const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent), featureFileContent)
     if (featureNode) {
       buildTreeStructure(featureFilePath, featureNode, baseDir)
     }
@@ -98,7 +99,7 @@ watch(
         // C'est un fichier de fonctionnalité unique
         const body = await fetch(featureFilePath)
         const featureFileContent = await body.text()
-        const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+        const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent), featureFileContent)
         if (featureNode) {
           buildTreeStructure(featureFilePath, featureNode, baseDir)
           buildBreadcrumb(decodedFeaturePath, reportName)
@@ -167,18 +168,21 @@ const updateFeatureNodeIfNecessary = (
       allTags: featureNode.allTags,
       feature: featureNode.feature,
       leaf: featureNode.leaf,
+      content: featureNode.content,
       type: 'feature'
     });
   }
 };
 
+
 // Fonction pour construire un nœud de fonctionnalité
-const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeNode | undefined => {
+const buildFeatureNode = (document: Messages.GherkinDocument | undefined, originalGherkin?: string | undefined): TreeNode | undefined => {
   const feature = document?.feature
   if (!feature) return undefined
+
   return {
     key: feature.name,
-    data: feature,
+    data:feature,
     label: feature.name,
     leaf: false,
     children: buildFeatureChildren(feature),
@@ -186,7 +190,8 @@ const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeN
     concatenatedTags: feature.tags.map((tag) => tag.name).join(" "),
     allTags: feature.tags.map((tag) => tag.name).join(" "),
     feature: true,
-    type: NODE_TYPE_FEATURE
+    type: NODE_TYPE_FEATURE,
+    content: originalGherkin
   } as TreeNode
 }
 
@@ -287,6 +292,36 @@ const buildBackgroundNode = (background: Messages.Background) => {
   } as TreeNode
 }
 
+const downloadNode = (node: TreeNode): void => {
+  try {
+    const content = node.content
+    if (!content) {
+      console.error("Aucun contenu Gherkin original trouvé dans ce node.")
+      return
+    }
+
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${node.label || "feature"}.feature`
+    a.click()
+
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error("Erreur lors du téléchargement :", error);
+  }
+};
+
+const editeNode = (node: TreeNode): void => {
+  router.push( {
+    path: '/editor',
+    state: { content: node.content }
+  });
+}
+
+
 </script>
 
 <template>
@@ -330,13 +365,20 @@ const buildBackgroundNode = (background: Messages.Background) => {
             <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
             <span v-else>&nbsp;</span>
             <span>{{ slotProps.node.label }}</span>
+            <span v-if="slotProps.node.content">&nbsp; <i class="pi pi-download cursor-pointer"
+                            title="Télécharger"
+                            @click.stop="downloadNode(slotProps.node)"></i></span>
+            <!--
+            <span v-if="slotProps.node.content">&nbsp; <i class="pi pi-file-edit cursor-pointer"
+                            title="Editer"
+                            @click.stop="editeNode(slotProps.node)"></i></span>
+                            -->
           </span>
           <span v-else-if="slotProps.node.type === NODE_TYPE_RULE">
             <!-- Affichage du mot-clé et du label -->
             <b> <i class="pi pi-link"></i>&nbsp;{{ slotProps.node.data?.keyword }}</b>
             <span > {{ FEATURE_SEPARATOR }} </span>
             <span>{{ slotProps.node.label }}</span>
-            >
           </span>
           <!-- Autres cas (règles, scénarios, etc.) -->
           <span v-else>
