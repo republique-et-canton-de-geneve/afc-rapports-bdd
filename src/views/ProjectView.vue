@@ -302,6 +302,7 @@ const buildBackgroundNode = (background: Messages.Background) => {
     >
       <template #default="slotProps">
         <CucumberTags :tags="slotProps.node.data?.tags" />
+
         <div class="title">
           <!-- Répertoires cliquables avec icône et label -->
           <span v-if="slotProps.node.type === NODE_TYPE_DIRECTORY">
@@ -334,9 +335,8 @@ const buildBackgroundNode = (background: Messages.Background) => {
             <!-- Affichage du mot-clé et du label -->
             <b> <i class="pi pi-link"></i>&nbsp;{{ slotProps.node.data?.keyword }}</b>
             <span > {{ FEATURE_SEPARATOR }} </span>
-            <pre>{{slotProps.node.data}}</pre>
-
             <span>{{ slotProps.node.label }}</span>
+            >
           </span>
           <!-- Autres cas (règles, scénarios, etc.) -->
           <span v-else>
@@ -344,17 +344,19 @@ const buildBackgroundNode = (background: Messages.Background) => {
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
             <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
             <span v-else>&nbsp;</span>
-            <span>{{ slotProps.node.label }}</span>
           </span>
         </div>
         <div class="description" v-if="slotProps.node.data?.description">
           {{ slotProps.node.data.description }}
         </div>
+
         <CucumberSteps v-if="slotProps.node.data?.steps" :steps="slotProps.node.data?.steps" />
         <CucumberExamples
           v-if="slotProps.node.data?.examples"
           :examples="slotProps.node.data?.examples"
         />
+
+
       </template>
     </Tree>
   </div>
