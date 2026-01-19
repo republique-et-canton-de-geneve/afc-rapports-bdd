@@ -16,7 +16,6 @@ import {
   NODE_TYPE_FEATURE,
   NODE_TYPE_RULE, NODE_TYPE_SCENARIO
 } from '@/service/treenode-service'
-import type FeatureTreeNodeData from '@/models/feature-tree-node-data'
 
 const BASE_URL = import.meta.env.BASE_URL
 const BASE_PROJECT_PATH = '/projets/'
@@ -314,10 +313,14 @@ const downloadNode = (node: TreeNode): void => {
   }
 };
 
-const editeNode = (node: TreeNode): void => {
+const editeNode = (node: TreeNode, split: boolean): void => {
   router.push( {
     path: '/editor',
-    state: { content: node.content }
+    state: {
+      title: node.label,
+      content: node.content,
+      split: split
+    }
   });
 }
 
@@ -352,7 +355,7 @@ const editeNode = (node: TreeNode): void => {
             </router-link>
           </span>
           <!-- Permalinks pour les fonctionnalités -->
-          <span v-else-if="slotProps.node.type === NODE_TYPE_FEATURE">
+          <div v-else-if="slotProps.node.type === NODE_TYPE_FEATURE" style=" display: flex; align-items: center; width: 100%">
             <router-link
               :to="{
                 params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
@@ -362,18 +365,22 @@ const editeNode = (node: TreeNode): void => {
             </router-link>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
-            <span v-else>&nbsp;</span>
+            <span> {{ FEATURE_SEPARATOR }} </span>
             <span>{{ slotProps.node.label }}</span>
-            <span v-if="slotProps.node.content">&nbsp; <i class="pi pi-download cursor-pointer"
+            <div style="margin-left: auto;">
+            <span>&nbsp; <i class="pi pi-download cursor-pointer"
                             title="Télécharger"
                             @click.stop="downloadNode(slotProps.node)"></i></span>
-            <!--
-            <span v-if="slotProps.node.content">&nbsp; <i class="pi pi-file-edit cursor-pointer"
-                            title="Editer"
-                            @click.stop="editeNode(slotProps.node)"></i></span>
-                            -->
-          </span>
+
+            <span>&nbsp; <i class="pi pi-eye cursor-pointer"
+                                                          title="Editer"
+                                                          @click.stop="editeNode(slotProps.node, false)"></i></span>
+
+            <span >&nbsp; <i class="pi pi-list-check cursor-pointer"
+                                                          title="Editer"
+                                                          @click.stop="editeNode(slotProps.node, true)"></i></span>
+            </div>
+          </div>
           <span v-else-if="slotProps.node.type === NODE_TYPE_RULE">
             <!-- Affichage du mot-clé et du label -->
             <b> <i class="pi pi-link"></i>&nbsp;{{ slotProps.node.data?.keyword }}</b>

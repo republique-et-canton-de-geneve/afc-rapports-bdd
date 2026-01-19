@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProjectView from '@/views/ProjectView.vue'
-import EditorView from '@/views/EditorView.vue'
+import BddViewerView from '@/views/BddViewerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +14,7 @@ const router = createRouter({
     {
       path: '/editor',
       name: 'editor',
-      component: EditorView, props: true
+      component: BddViewerView, props: true
     },
     {
       path: '/projets/:slug/:feature(.*)?',
