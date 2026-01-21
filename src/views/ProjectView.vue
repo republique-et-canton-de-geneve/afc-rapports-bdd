@@ -339,7 +339,7 @@ const editeNode = (node: TreeNode, split: boolean): void => {
 
     >
       <template #default="slotProps">
-        <CucumberTags :tags="slotProps.node.data?.tags" />
+        <CucumberTags v-if="slotProps.node.data?.tags" :tags="slotProps.node.data?.tags" />
 
         <div class="title">
           <!-- Répertoires cliquables avec icône et label -->

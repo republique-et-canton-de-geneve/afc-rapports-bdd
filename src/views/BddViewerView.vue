@@ -3,13 +3,16 @@
 import { computed } from 'vue'
 import CodeViewer from '@/views/CodeViewer.vue'
 
-const blocks = computed(() => splitByRule(history.state.content))
+const blocks = computed(() => splitByRule(history.state?.content))
 
-function splitByRule(text: string) {
-  const blocks = []
+function splitByRule(text: string | undefined) : string[]{
+  if(text === undefined) {
+    return []
+  }
+  const blocks:string[] = []
   if(history.state.split) {
     const lines = text.split('\n')
-    let currentBlock = []
+    let currentBlock:string[] = []
 
     for (const line of lines) {
       if (line.startsWith('  Règle')) {
@@ -31,10 +34,21 @@ function splitByRule(text: string) {
 
   return blocks
 }
-function getTitle(block, index) {
-  const firstLine = block.split('\n')[0]
-  return firstLine.startsWith('Règle')
-    ? firstLine
+
+function getTitle(block:string, index: number) {
+
+  const lignes = block.split('\n');
+  let fonction = "Fonctionnalité:";
+  let regle = "Règle:";
+
+  const premiereLigne = lignes.find(
+    ligne =>
+      ligne.includes(fonction) ||
+      ligne.includes(regle)
+  );
+
+  return premiereLigne
+    ? premiereLigne
     : `Bloc ${index + 1}`
 }
 </script>

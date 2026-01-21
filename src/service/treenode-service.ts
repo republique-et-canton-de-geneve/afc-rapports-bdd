@@ -92,8 +92,24 @@ export const extractFeatureNumber = (label: string): number | null => {
 }
 
 
-export function generateCombinationString (input: string): string {
-  const tags = input.split(" ").filter(Boolean);
+/**
+ * Retourne une liste de tag indexable par le composant recherche
+ *
+ * Par exemple :
+ *  Input "@ABC @XYZ"
+ *
+ * Retourne le tableau suivant :
+ *  [
+ *    "@ABC",
+ *    "@XYZ",
+ *    "@ABC @XYZ",
+ *    "@XYZ @ABC"
+ *  ]
+ *
+ * @param listeTagBdd Liste des tag de scénario bdd
+ */
+export function generateCombinationString (listeTagBdd: string): string {
+  const tags = listeTagBdd.split(" ").filter(Boolean);
   const results: string[] = [];
 
   // Génération des permutations
