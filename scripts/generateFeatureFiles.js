@@ -68,7 +68,7 @@ function generateFiles() {
 
   const inputDirPath = process.env.FEATURES_DIR
     ? path.resolve(process.env.FEATURES_DIR)
-    : null
+    : 'public'
 
   // If no FEATURES_DIR was provided or directory is missing, generate empty datasets
   if (!inputDirPath || !fs.existsSync(inputDirPath)) {

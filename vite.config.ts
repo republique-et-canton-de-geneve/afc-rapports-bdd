@@ -7,7 +7,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: process.env.BASE_PATH ?? '/',
-  publicDir: process.env.FEATURES_DIR ? path.resolve(process.env.FEATURES_DIR) : false,
+  publicDir: process.env.FEATURES_DIR ? path.resolve(process.env.FEATURES_DIR) : true,
   plugins: [
     vue(),
   ],

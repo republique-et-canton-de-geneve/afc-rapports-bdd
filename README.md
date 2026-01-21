@@ -25,7 +25,12 @@ npx rapports-bdd --features ./features --out ./dist
 - `--out`: dossier de sortie du site (ex: `dist`)
 - `--base`: base URL si la webapp est servie sous un sous‑chemin
 
+### Note importante : Avant la version 1.1.0 
 Important: la librairie ne contient ni features ni configuration « projet » — fournissez toujours `--features`.
+
+### Note importante : A partir version 1.1.0
+Le répertoire public devient le paramètre features par défaut. 
+Cela permet la compatibilité au module d'être executable en dev depuis la source de ce projet 
 
 ## Démarrer plus vite avec le template
 Le dépôt inclut un projet client prêt à l’emploi dans `template/`.
@@ -61,6 +66,8 @@ npm run lint
 Notes:
 - Sans `FEATURES_DIR` (défini par le CLI), la génération produit des listes vides. C’est normal pour la librairie.
 - Pour tester la librairie en conditions réelles, utilisez le dossier `template/` et ses scripts dédiés.
+
+A partir de la version 1.1.0 la libraire peut être testé en condition réelle en copiant/collant le contenu du répertoire template dans le répertoire `public/`
 
 
 ## Scripts de la librairie — à quoi servent-ils ?

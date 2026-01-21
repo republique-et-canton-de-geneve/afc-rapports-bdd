@@ -10,18 +10,20 @@ import { FEATURE_FILES } from '@/generated/featureFiles'
 import CucumberExamples from '@/components/CucumberExamples.vue'
 import CucumberSteps from '@/components/CucumberSteps.vue'
 import CucumberTags from '@/components/CucumberTags.vue'
+import {
+  findNodeByKey,
+  findOrCreateNode, generateCombinationString, NODE_TYPE_BACKGROUND, NODE_TYPE_DIRECTORY,
+  NODE_TYPE_FEATURE,
+  NODE_TYPE_RULE, NODE_TYPE_SCENARIO
+} from '@/service/treenode-service'
 
 const BASE_URL = import.meta.env.BASE_URL
 const BASE_PROJECT_PATH = '/projets/'
 const BASE_PROJECTS_DIR = `${BASE_URL}projects/`
 const SLASH = "/";
 const FEATURE_SEPARATOR = ":";
+const RULE_SEPARATOR = " #";
 const EMPTY_STRING = "";
-const NODE_TYPE_DIRECTORY = "directory";
-const NODE_TYPE_FEATURE = "feature";
-const NODE_TYPE_RULE = "rule";
-const NODE_TYPE_SCENARIO = "scenario";
-const NODE_TYPE_BACKGROUND = "background";
 
 const route = useRoute()
 const router = useRouter()
@@ -30,21 +32,6 @@ const router = useRouter()
 const featuresTreeNode = ref<TreeNode[]>([])
 const expandedKeys = ref<{ [key: string]: boolean }>({})
 
-// Fonction pour trouver un nœud dans l'arbre par sa clé (pour le fil d'ariane)
-const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefined => {
-  for (const node of nodes) {
-    if (node.key === key) {
-      return node
-    }
-    if (node.children) {
-      const result = findNodeByKey(node.children, key)
-      if (result) {
-        return result
-      }
-    }
-  }
-  return undefined
-}
 
 // Données pour le fil d'Ariane (breadcrumb)
 const breadcrumbItems = ref<any[]>([])
@@ -76,7 +63,7 @@ const loadFeatures = async (paths: string[], baseDir: string) => {
   const promises = paths.map(async (featureFilePath) => {
     const body = await fetch(featureFilePath)
     const featureFileContent = await body.text()
-    const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+    const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent), featureFileContent)
     if (featureNode) {
       buildTreeStructure(featureFilePath, featureNode, baseDir)
     }
@@ -111,7 +98,7 @@ watch(
         // C'est un fichier de fonctionnalité unique
         const body = await fetch(featureFilePath)
         const featureFileContent = await body.text()
-        const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent))
+        const featureNode = buildFeatureNode(parseFeatureFile(featureFileContent), featureFileContent)
         if (featureNode) {
           buildTreeStructure(featureFilePath, featureNode, baseDir)
           buildBreadcrumb(decodedFeaturePath, reportName)
@@ -164,42 +151,6 @@ const extractFilePathParts = (filePath: string, baseDir: string): string[] => {
     .filter(Boolean);
 };
 
-// Fonction pour trouver ou créer un nœud existant
-const findOrCreateNode = (
-  currentLevel: TreeNode[],
-  part: string,
-  index: number,
-  parts: string[],
-  featureNode: TreeNode
-): TreeNode => {
-  let existingNode = currentLevel.find((node) => node.label === part);
-  if (!existingNode) {
-    existingNode = createNode(part, index, parts, featureNode);
-    currentLevel.push(existingNode);
-    currentLevel.sort(compareTreeNodes);
-  }
-  return existingNode;
-};
-
-// Fonction pour créer un nœud
-const createNode = (
-  part: string,
-  index: number,
-  parts: string[],
-  featureNode: TreeNode
-): TreeNode => {
-  return {
-    key: parts.slice(0, index + 1).join('/'),
-    label: index === parts.length - 1 ? featureNode.label : part,
-    children: [],
-    leaf: false,
-    data: index === parts.length - 1 ? featureNode.data : undefined,
-    feature: index === parts.length - 1 ? featureNode.feature : undefined,
-    concatenatedTags: index === parts.length - 1 ? featureNode.concatenatedTags : undefined,
-    type: index === parts.length - 1 ? 'feature' : 'directory'
-  };
-};
-
 // Fonction pour mettre à jour le nœud de fonctionnalité si nécessaire
 const updateFeatureNodeIfNecessary = (
   existingNode: TreeNode,
@@ -213,35 +164,42 @@ const updateFeatureNodeIfNecessary = (
       children: featureNode.children,
       data: featureNode.data,
       concatenatedTags: featureNode.concatenatedTags,
+      allTags: featureNode.allTags,
       feature: featureNode.feature,
       leaf: featureNode.leaf,
+      content: featureNode.content,
       type: 'feature'
     });
   }
 };
 
+
 // Fonction pour construire un nœud de fonctionnalité
-const buildFeatureNode = (document: Messages.GherkinDocument | undefined): TreeNode | undefined => {
+const buildFeatureNode = (document: Messages.GherkinDocument | undefined, originalGherkin?: string | undefined): TreeNode | undefined => {
   const feature = document?.feature
   if (!feature) return undefined
+
   return {
     key: feature.name,
-    data: feature,
+    data:feature,
     label: feature.name,
     leaf: false,
-    children: buildFeatureChildren(feature.children),
-    concatenatedTags: feature.tags.map((tag) => tag.name).join(),
+    children: buildFeatureChildren(feature),
+    fullText: document,
+    concatenatedTags: feature.tags.map((tag) => tag.name).join(" "),
+    allTags: feature.tags.map((tag) => tag.name).join(" "),
     feature: true,
-    type: NODE_TYPE_FEATURE
+    type: NODE_TYPE_FEATURE,
+    content: originalGherkin
   } as TreeNode
 }
 
 // Fonction pour construire les enfants d'une fonctionnalité
-const buildFeatureChildren = (features: readonly Messages.FeatureChild[]): TreeNode[] => {
-  return features
+const buildFeatureChildren = (featureParent:Messages.Feature): TreeNode[] => {
+  return featureParent.children
     .map((featureChild: Messages.FeatureChild) => {
       if (featureChild.rule) {
-        return buildRuleNode(featureChild.rule)
+        return buildRuleNode(featureParent, featureChild.rule)
       }
       if (featureChild.background) {
         return buildBackgroundNode(featureChild.background)
@@ -260,20 +218,50 @@ const buildScenarioNode = (scenario: Messages.Scenario) => {
     data: scenario,
     label: scenario.name,
     leaf: true,
-    concatenatedTags: scenario.tags.map((tag) => tag.name).join(),
+    concatenatedTags: scenario.tags?.map((tag) => tag.name).join(),
+    allTags: generateAllTags(scenario.tags as Messages.Tag[]),
+    fullText: fullTextScenario(scenario),
     type: NODE_TYPE_SCENARIO
   } as TreeNode
 }
 
+const generateAllTags = (tags: Messages.Tag[]):string => {
+  return generateCombinationString(tags?.map((tag) => tag.name).join(" "));
+}
+
+const fullTextScenario = (scenario: Messages.Scenario):string => {
+  return scenario
+          .steps?.map((s) => s.text + " " + s.dataTable?.rows.map(
+              (r) => {
+                return r.cells.map(c => c.value).join(" ")
+              }
+
+          )).join(" ") + " " +
+
+      scenario.examples.map(
+        (e) => {
+          // lignes
+          return e.tableBody.map((tb) => {
+            // cellules
+            return tb.cells.map(c => c.value).join(" ")
+          }).join(" ")
+        }
+
+      )
+      .join(" ");
+}
+
 // Fonction pour construire un nœud de règle
-const buildRuleNode = (rule: Messages.Rule) => {
+const buildRuleNode = (featureParent:Messages.Feature, rule: Messages.Rule) => {
+
   return {
-    key: rule.id,
+    key: featureParent.name+ RULE_SEPARATOR + rule.name,
     data: rule,
     label: rule.name,
     leaf: false,
     children: buildRuleChildren(rule.children),
     concatenatedTags: rule.tags.map((tag) => tag.name).join(),
+    allTags: rule.tags.map((tag) => tag.name).join(" "),
     type: NODE_TYPE_RULE
   } as TreeNode
 }
@@ -303,32 +291,40 @@ const buildBackgroundNode = (background: Messages.Background) => {
   } as TreeNode
 }
 
-// Fonction de comparaison pour trier les nœuds de l'arbre
-const compareTreeNodes = (a: TreeNode, b: TreeNode): number => {
-  if (a.type === NODE_TYPE_DIRECTORY && b.type !== NODE_TYPE_DIRECTORY) return -1
-  if (a.type !== NODE_TYPE_DIRECTORY && b.type === NODE_TYPE_DIRECTORY) return 1
-
-  if (!a.label || !b.label) return 0
-
-  if (a.type === NODE_TYPE_FEATURE && b.type === NODE_TYPE_FEATURE) {
-    const numA = extractFeatureNumber(a.label)
-    const numB = extractFeatureNumber(b.label)
-    if (numA !== null && numB !== null) {
-      return numA - numB
+const downloadNode = (node: TreeNode): void => {
+  try {
+    const content = node.content
+    if (!content) {
+      console.error("Aucun contenu Gherkin original trouvé dans ce node.")
+      return
     }
-  }
 
-  return a.label.localeCompare(b.label)
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${node.label || "feature"}.feature`
+    a.click()
+
+    URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error("Erreur lors du téléchargement :", error);
+  }
+};
+
+const editeNode = (node: TreeNode, split: boolean): void => {
+  router.push( {
+    path: '/editor',
+    state: {
+      title: node.label,
+      content: node.content,
+      split: split
+    }
+  });
 }
 
-// Fonction pour extraire le numéro de la fonctionnalité
-const extractFeatureNumber = (label: string): number | null => {
-  const match = label.match(/F(\d+)/)
-  if (match && match[1]) {
-    return parseInt(match[1], 10)
-  }
-  return null
-}
+
 </script>
 
 <template>
@@ -336,13 +332,15 @@ const extractFeatureNumber = (label: string): number | null => {
   <div v-if="featuresTreeNode">
     <Tree
       :value="featuresTreeNode"
-      :filter="true"
+      filter
       filterMode="lenient"
-      filterBy="label,concatenatedTags"
+      filter-by="label,concatenatedTags,allTags,fullText"
       :expandedKeys="expandedKeys"
+
     >
       <template #default="slotProps">
-        <CucumberTags :tags="slotProps.node.data?.tags" />
+        <CucumberTags v-if="slotProps.node.data?.tags" :tags="slotProps.node.data?.tags" />
+
         <div class="title">
           <!-- Répertoires cliquables avec icône et label -->
           <span v-if="slotProps.node.type === NODE_TYPE_DIRECTORY">
@@ -357,7 +355,7 @@ const extractFeatureNumber = (label: string): number | null => {
             </router-link>
           </span>
           <!-- Permalinks pour les fonctionnalités -->
-          <span v-else-if="slotProps.node.type === NODE_TYPE_FEATURE">
+          <div v-else-if="slotProps.node.type === NODE_TYPE_FEATURE" style=" display: flex; align-items: center; width: 100%">
             <router-link
               :to="{
                 params: { ...$route.params, feature: encodeURIComponent(slotProps.node.key || EMPTY_STRING) }
@@ -367,8 +365,26 @@ const extractFeatureNumber = (label: string): number | null => {
             </router-link>
             <!-- Affichage du mot-clé et du label -->
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
-            <span v-else>&nbsp;</span>
+            <span> {{ FEATURE_SEPARATOR }} </span>
+            <span>{{ slotProps.node.label }}</span>
+            <div style="margin-left: auto;">
+            <span>&nbsp; <i class="pi pi-download cursor-pointer"
+                            title="Télécharger"
+                            @click.stop="downloadNode(slotProps.node)"></i></span>
+
+            <span>&nbsp; <i class="pi pi-eye cursor-pointer"
+                                                          title="Editer"
+                                                          @click.stop="editeNode(slotProps.node, false)"></i></span>
+
+            <span >&nbsp; <i class="pi pi-list-check cursor-pointer"
+                                                          title="Editer"
+                                                          @click.stop="editeNode(slotProps.node, true)"></i></span>
+            </div>
+          </div>
+          <span v-else-if="slotProps.node.type === NODE_TYPE_RULE">
+            <!-- Affichage du mot-clé et du label -->
+            <b> <i class="pi pi-link"></i>&nbsp;{{ slotProps.node.data?.keyword }}</b>
+            <span > {{ FEATURE_SEPARATOR }} </span>
             <span>{{ slotProps.node.label }}</span>
           </span>
           <!-- Autres cas (règles, scénarios, etc.) -->
@@ -377,17 +393,19 @@ const extractFeatureNumber = (label: string): number | null => {
             <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
             <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
             <span v-else>&nbsp;</span>
-            <span>{{ slotProps.node.label }}</span>
           </span>
         </div>
         <div class="description" v-if="slotProps.node.data?.description">
           {{ slotProps.node.data.description }}
         </div>
+
         <CucumberSteps v-if="slotProps.node.data?.steps" :steps="slotProps.node.data?.steps" />
         <CucumberExamples
           v-if="slotProps.node.data?.examples"
           :examples="slotProps.node.data?.examples"
         />
+
+
       </template>
     </Tree>
   </div>
