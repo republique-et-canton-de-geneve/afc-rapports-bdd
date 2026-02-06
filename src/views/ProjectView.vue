@@ -389,10 +389,10 @@ const editeNode = (node: TreeNode, split: boolean): void => {
           </span>
           <!-- Autres cas (règles, scénarios, etc.) -->
           <span v-else>
-            <!-- Affichage du mot-clé et du label -->
-            <b>&nbsp;{{ slotProps.node.data?.keyword }}</b>
-            <span v-if="slotProps.node.type === NODE_TYPE_FEATURE || slotProps.node.type === NODE_TYPE_RULE"> {{ FEATURE_SEPARATOR }} </span>
-            <span v-else>&nbsp;</span>
+            <div class="title">
+              <b>{{ slotProps.node.data?.keyword}}</b> {{ slotProps.node.label }}
+            </div>
+
           </span>
         </div>
         <div class="description" v-if="slotProps.node.data?.description">
