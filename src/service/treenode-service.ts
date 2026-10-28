@@ -1,6 +1,5 @@
 
-// Fonction pour trouver un nœud dans l'arbre par sa clé (pour le fil d'ariane)
-import type { TreeNode } from 'primevue/treenode'
+import type FeatureTreeNode from '@/models/feature-tree-node'
 
 export const NODE_TYPE_DIRECTORY = "directory";
 export const NODE_TYPE_FEATURE = "feature";
@@ -8,7 +7,7 @@ export const NODE_TYPE_RULE = "rule";
 export const NODE_TYPE_SCENARIO = "scenario";
 export const NODE_TYPE_BACKGROUND = "background";
 
-export const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefined => {
+export const findNodeByKey = (nodes: FeatureTreeNode[], key: string): FeatureTreeNode | undefined => {
   for (const node of nodes) {
     if (node.key === key) {
       return node
@@ -26,17 +25,17 @@ export const findNodeByKey = (nodes: TreeNode[], key: string): TreeNode | undefi
 
 // Fonction pour trouver ou créer un nœud existant
 export const findOrCreateNode = (
-  currentLevel: TreeNode[],
+  currentLevel: FeatureTreeNode[],
   part: string,
   index: number,
   parts: string[],
-  featureNode: TreeNode
-): TreeNode => {
+  featureNode: FeatureTreeNode
+): FeatureTreeNode => {
   let existingNode = currentLevel.find((node) => node.label === part);
   if (!existingNode) {
     existingNode = createNode(part, index, parts, featureNode);
     currentLevel.push(existingNode);
-    currentLevel.sort(compareTreeNodes);
+    currentLevel.sort(compareFeatureTreeNodes);
   }
   return existingNode;
 };
@@ -47,8 +46,8 @@ export const createNode = (
   part: string,
   index: number,
   parts: string[],
-  featureNode: TreeNode
-): TreeNode => {
+  featureNode: FeatureTreeNode
+): FeatureTreeNode => {
   return {
     key: parts.slice(0, index + 1).join('/'),
     label: index === parts.length - 1 ? featureNode.label : part,
@@ -64,7 +63,7 @@ export const createNode = (
 
 
 // Fonction de comparaison pour trier les nœuds de l'arbre
-export const compareTreeNodes = (a: TreeNode, b: TreeNode): number => {
+export const compareFeatureTreeNodes = (a: FeatureTreeNode, b: FeatureTreeNode): number => {
   if (a.type === NODE_TYPE_DIRECTORY && b.type !== NODE_TYPE_DIRECTORY) return -1
   if (a.type !== NODE_TYPE_DIRECTORY && b.type === NODE_TYPE_DIRECTORY) return 1
 
