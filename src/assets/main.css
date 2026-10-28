@@ -1,18 +1,70 @@
 :root {
-  --primary: #eff0f0;
-  --secondary: #173647;
-  --accent: #1dbb68;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  color: #172b27;
+  background: #f4f6f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
 }
 
-#app,
+html,
 body,
-html {
-  min-height: 100vh;
+#app {
+  min-width: 320px;
+  min-height: 100%;
   margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
 }
 
-.p-tree-node-toggle-button {
-  align-self: start;
+body {
+  min-height: 100vh;
+}
+
+button,
+a,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role='button']:focus-visible {
+  outline: 3px solid rgba(18, 91, 80, 0.35);
+  outline-offset: 2px;
+}
+
+.text-icon {
+  display: inline-flex;
+  min-width: 1em;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.v-application {
+  background: #f4f6f8 !important;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+}
+
+.v-btn {
+  font-weight: 600;
+}
+
+.v-field--variant-outlined .v-field__outline {
+  --v-field-border-opacity: 0.13;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

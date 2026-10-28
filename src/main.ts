@@ -1,62 +1,74 @@
 import './assets/main.css'
-import 'primeicons/primeicons.css'
+import 'vuetify/styles'
 
-import { createApp } from 'vue'
+import { createApp, defineComponent, h, type PropType } from 'vue'
+import type { IconProps } from 'vuetify'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 import App from './App.vue'
 import router from './router'
 
-import PrimeVue from 'primevue/config'
-import Tree from 'primevue/tree'
-import Fieldset from 'primevue/fieldset'
-import Tag from 'primevue/tag'
-import Breadcrumb from 'primevue/breadcrumb'
-import PanelMenu from 'primevue/panelmenu'
-import Aura from '@primevue/themes/aura';
-import { definePreset } from '@primevue/themes'
+const TextIcon = defineComponent({
+  props: {
+    icon: { type: [String, Object, Function, Array] as PropType<IconProps['icon']>, required: false },
+    tag: { type: [String, Object, Function] as PropType<IconProps['tag']>, required: true },
+    disabled: { type: Boolean, default: false }
+  },
+  setup(props) {
+    return () => h(props.tag as string, { class: 'text-icon', 'aria-hidden': 'true' }, typeof props.icon === 'string' ? props.icon : '')
+  }
+})
 
-const app = createApp(App)
-const myPreset = definePreset(Aura, {
-  components: {
-    panelmenu: {
-      panel: {
-        background: 'var(--secondary)',
-        border: {
-          color: 'transparent'
-        },
-        first: {
-          border: {
-            color: 'transparent'
-          }
-        },
-        last: {
-          border: {
-            color: 'transparent'
-          }
-        }
-      },
-      item: {
-        color: 'var(--primary)',
-        padding: "1em",
-        focus: {
-          color: 'var(--secondary)',
-          background: 'var(--primary)'
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: 'text',
+    aliases: {
+      collapse: '−',
+      expand: '+',
+      dropdown: '⌄',
+      prev: '‹',
+      next: '›',
+      close: '×',
+      clear: '×',
+      info: 'i',
+      warning: '!',
+      error: '×',
+      success: '✓',
+      loading: '◌',
+      treeviewExpand: '+',
+      treeviewCollapse: '−',
+      file: '▤'
+    },
+    sets: { text: { component: TextIcon } }
+  },
+  theme: {
+    defaultTheme: 'reportsLight',
+    themes: {
+      reportsLight: {
+        dark: false,
+        colors: {
+          background: '#f4f6f8',
+          surface: '#ffffff',
+          primary: '#125b50',
+          secondary: '#536b67',
+          error: '#b42318',
+          info: '#176b87',
+          success: '#16794b',
+          warning: '#9a6700',
+          'on-background': '#172b27',
+          'on-surface': '#172b27'
         }
       }
     }
-  }
-})
-app.use(router)
-
-app.mount('#app')
-
-app.use(PrimeVue, {
-  theme: {
-    preset: myPreset,
+  },
+  defaults: {
+    VBtn: { rounded: 'lg', style: 'text-transform: none; letter-spacing: 0' },
+    VCard: { rounded: 'xl' },
+    VTextField: { variant: 'outlined', density: 'comfortable', hideDetails: 'auto' }
   }
 })
 
-app.component('Fieldset', Fieldset)
-app.component('Tree', Tree)
-app.component('Tag', Tag)
-app.component('Breadcrumb', Breadcrumb)
-app.component('PanelMenu', PanelMenu); 
+createApp(App).use(router).use(vuetify).mount('#app')
