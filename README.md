@@ -25,6 +25,22 @@ npx rapports-bdd --features ./features --out ./dist
 - `--out`: dossier de sortie du site (ex: `dist`)
 - `--base`: base URL si la webapp est servie sous un sous‑chemin
 
+Le fichier `rapports-bdd.config.json` peut aussi déclarer des dépôts Git dans `sourcesGit`. Le CLI les récupère au build et copie uniquement les fichiers `.feature` dans le site statique. Chaque entrée précise `repository`, `ref`, `path` (un chemin) ou `paths` (plusieurs chemins fusionnés sous le même slug), et `slug`. Pour un dépôt privé, configurez l’accès Git dans l’environnement de build (clé SSH ou gestionnaire d’identifiants); ne placez jamais de jeton dans l’URL ou le fichier JSON.
+
+```json
+{
+  "sourcesGit": [
+    {
+      "repository": "https://github.com/organisation/projet-features.git",
+      "ref": "main",
+      "path": "features",
+      "slug": "projet-features"
+    }
+  ]
+}
+```
+
+Utilisez de préférence un hash de commit pour figer exactement les features publiées. Les slugs doivent être uniques et les traductions/catégories se règlent dans `translations` comme pour les projets locaux. Les sources Git sont prises en charge par le CLI `rapports-bdd`; le site généré ne se connecte jamais aux dépôts.
 ### Note importante : Avant la version 1.1.0 
 Important: la librairie ne contient ni features ni configuration « projet » — fournissez toujours `--features`.
 

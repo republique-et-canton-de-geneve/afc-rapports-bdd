@@ -25,7 +25,22 @@ features/
   - `translations`: pour donner un nom lisible et une catégorie à chaque slug.
   - `defaultCategory`: catégorie par défaut si un slug n'a pas de traduction.
   - `ignoredSlugs`: slugs à masquer de l'interface.
+  - `sourcesGit`: dépôts Git à récupérer au build. Chaque entrée contient `repository`, `ref`, `slug`, et `path` ou `paths`.
 
+Exemple de source externe:
+
+```json
+{
+  "repository": "https://github.com/organisation/projet-features.git",
+  "ref": "main",
+  "path": "features",
+  "slug": "projet-features"
+}
+```
+
+Le CLI clone la révision déclarée avant le build, puis copie uniquement les `.feature` du chemin ou des chemins dans `projects/<slug>/`. Les chemins multiples sont fusionnés; une collision de noms fait échouer le build au lieu d’écraser un fichier. Les traductions et catégories du projet se définissent dans `translations`. Utilisez une ref de commit pour un résultat strictement reproductible.
+
+Pour un dépôt privé, fournissez l’accès Git hors du fichier de configuration, via une clé SSH ou le gestionnaire d’identifiants Git de l’environnement CI. N’incluez jamais de jeton dans l’URL, le JSON ou les artefacts publiés. Le site généré reste statique et ne contacte pas Git.
 Dans ce template, deux slugs d'exemple sont fournis:
 - `demo-backend`
 - `finance-backend`

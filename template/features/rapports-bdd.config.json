@@ -1,6 +1,18 @@
 {
   "translations": [
-    { "slug": "prodimpotpp-backend", "name": "Prod impot PP", "categorie": "10-R-TaxPP" }
+    { "slug": "prodimpotpp-backend", "name": "Prod impot PP", "categorie": "10-R-TaxPP" },
+    { "slug": "RVI", "name": "Référentiel des valeurs immobilière", "categorie": "10-rs/test" }
+  ],
+  "sourcesGit": [
+    {
+      "repository": "https://git.devops.etat-ge.ch/DEVELOPPEUR-AFC/urbafc/quartiers/referentiel/rvi/rvi-backend.git",
+      "ref": "master",
+      "paths": [
+        "ui/rvi-ui-bdd/src/test/resources/features",
+        "ui/rvi-ui-integration-bdd/src/test/resources/features"
+      ],
+      "slug": "RVI"
+    }
   ],
   "defaultCategory": "Orphelins",
   "ignoredSlugs": []

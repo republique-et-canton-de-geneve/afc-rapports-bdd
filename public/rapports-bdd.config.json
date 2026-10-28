@@ -3,5 +3,6 @@
     { "slug": "test", "name": "Hello world", "categorie": "00-Hello world" }
   ],
   "defaultCategory": "Orphelins",
-  "ignoredSlugs": []
+  "ignoredSlugs": [],
+  "sourcesGit": []
 }
