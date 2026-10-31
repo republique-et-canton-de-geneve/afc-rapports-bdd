@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process'
 import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
+import { prepareGitFeatureSources } from '../scripts/gitFeatureSources.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -34,10 +35,21 @@ if (basePath) {
   process.env.BASE_PATH = basePath
 }
 
-console.log(`[rapports-bdd] Using FEATURES_DIR="${process.env.FEATURES_DIR ?? ''}", OUT_DIR="${process.env.OUT_DIR ?? ''}", BASE_PATH="${process.env.BASE_PATH ?? ''}"`)
-const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
-const result = spawnSync(npmCmd, ['run', 'build'], { stdio: 'inherit', cwd: pkgRoot, env: { ...process.env }, shell: true })
-if (result.error) {
-  console.error(`[rapports-bdd] Failed to run build: ${result.error.message}`)
+let stagedFeaturesDirectory
+let exitCode = 1
+try {
+  const inputFeaturesDirectory = process.env.FEATURES_DIR || path.resolve(process.cwd(), 'public')
+  stagedFeaturesDirectory = prepareGitFeatureSources(inputFeaturesDirectory)
+  if (stagedFeaturesDirectory) process.env.FEATURES_DIR = stagedFeaturesDirectory
+
+  console.log(`[rapports-bdd] Using FEATURES_DIR="${process.env.FEATURES_DIR ?? ''}", OUT_DIR="${process.env.OUT_DIR ?? ''}", BASE_PATH="${process.env.BASE_PATH ?? ''}"`)
+  const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+  const result = spawnSync(npmCmd, ['run', 'build'], { stdio: 'inherit', cwd: pkgRoot, env: { ...process.env }, shell: process.platform === 'win32', windowsHide: true })
+  if (result.error) throw result.error
+  exitCode = result.status ?? 1
+} catch (error) {
+  console.error(`[rapports-bdd] ${error.message}`)
+} finally {
+  if (stagedFeaturesDirectory) fs.rmSync(stagedFeaturesDirectory, { recursive: true, force: true })
 }
-process.exit(result.status ?? 1)
+process.exit(exitCode)

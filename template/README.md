@@ -12,6 +12,7 @@ Important: ce dossier `template/` n’est pas inclus dans le paquet publié sur 
 
 ## Prérequis
 - Node.js >= 18
+- Git disponible dans le `PATH` si `sourcesGit` est utilisé
 
 ## Démarrage rapide
 1) Copier ce dossier `template/` hors du dépôt si besoin et renommer le répertoire selon votre projet.
@@ -46,8 +47,27 @@ Placez un fichier `features/rapports-bdd.config.json` pour personnaliser l’aff
 - `translations`: [{ slug, name, categorie }]
 - `defaultCategory`: chaîne utilisée par défaut si pas de traduction
 - `ignoredSlugs`: slugs à masquer
+- `sourcesGit`: dépôts à récupérer pendant le build; chaque objet contient `repository`, `ref`, un `path` ou plusieurs `paths`, et `slug`
 
-Un exemple concret est fourni dans `template/features/rapports-bdd.config.json`.
+Exemple:
+```json
+{
+  "sourcesGit": [
+    {
+      "repository": "https://github.com/organisation/projet-features.git",
+      "ref": "main",
+      "path": "features",
+      "slug": "projet-features"
+    }
+  ]
+}
+```
+
+Le CLI récupère la ref indiquée avant de générer le site et copie uniquement les `.feature` de chaque chemin dans le même répertoire `projects/<slug>/`; les chemins sont fusionnés et une collision de noms est signalée. Pour un build reproductible, utilisez de préférence un hash de commit. Pour les dépôts privés, configurez SSH ou le gestionnaire d’identifiants Git de la CI; ne mettez pas d’identifiants dans l’URL ou dans la configuration. Les dépôts distants peuvent contenir d’autres fichiers; ceux-ci ne sont pas publiés. La configuration `sourcesGit` n’est pas intégrée au site final.
+
+Les `translations` et `ignoredSlugs` s’appliquent aussi aux projets Git. Les slugs doivent être uniques par rapport aux projets locaux.
+
+Un exemple de configuration locale est fourni dans `template/features/rapports-bdd.config.json`.
 
 ## Personnalisation des chemins
 - Dossier d’entrée: modifiez le script `build` si besoin (par défaut: `--features features`).
@@ -64,6 +84,7 @@ Exemple dans `template/package.json`:
 
 ## Dépannage rapide
 - Aucune feature visible: vérifiez que vos `.feature` sont bien sous `features/projects/<slug>/...` ou directement sous `features/` (mode simple). Vérifiez aussi `rapports-bdd.config.json` (facultatif) et relancez `npm run build`.
+- Échec d’une source Git: vérifiez `repository`, `ref`, `path`, que Git est installé et que les identifiants sont configurés pour le compte qui exécute le build.
 - Chemins cassés en preview derrière un sous‑chemin: ajoutez `--base /votre-sous-chemin/` au script `build`.
 
 ## Remarques
